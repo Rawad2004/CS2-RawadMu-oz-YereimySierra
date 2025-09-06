@@ -35,9 +35,10 @@ public class Staff {
      * @param newAddress     la nueva dirección.
      * @param newPhoneNumber el nuevo número de teléfono.
      */
-    public void updateContactInfo(Address newAddress, PhoneNumber newPhoneNumber) {
+    public void updateContactInfo(Address newAddress, PhoneNumber newPhoneNumber, Email newEmail) {
         this.address = newAddress;
         this.phoneNumber = newPhoneNumber;
+        this.email = newEmail;
     }
 
     /**

@@ -1,3 +1,4 @@
+// File: src/main/java/app/domain/repository/ClinicalHistoryRepositoryPort.java
 package app.domain.repository;
 
 import app.domain.model.ClinicalHistoryEntry;
@@ -24,4 +25,36 @@ public interface ClinicalHistoryRepositoryPort {
      * @return Un Optional con la entrada si se encuentra.
      */
     Optional<ClinicalHistoryEntry> findByPatientIdAndVisitDate(NationalId patientId, LocalDate visitDate);
+
+    /**
+     * Actualiza el diagnóstico de una entrada de historia clínica.
+     * @param entryId ID de la entrada a actualizar.
+     * @param newDiagnosis Nuevo diagnóstico.
+     * @param updateDate Fecha de la actualización.
+     * @return La entrada actualizada.
+     */
+    ClinicalHistoryEntry updateDiagnosis(Long entryId, String newDiagnosis, LocalDate updateDate);
+
+    /**
+     * Actualiza múltiples campos de una entrada de historia clínica.
+     * @param entryId ID de la entrada a actualizar.
+     * @param newDiagnosis Nuevo diagnóstico (opcional).
+     * @param additionalNotes Notas adicionales (opcional).
+     * @param updateDate Fecha de la actualización.
+     * @return La entrada actualizada.
+     */
+    ClinicalHistoryEntry updateEntry(Long entryId, String newDiagnosis, String additionalNotes, LocalDate updateDate);
+
+    /**
+     * Busca una entrada por su ID.
+     * @param entryId ID de la entrada.
+     * @return Un Optional con la entrada si se encuentra.
+     */
+    Optional<ClinicalHistoryEntry> findById(Long entryId);
+
+    /**
+     * Elimina una entrada de historia clínica.
+     * @param entryId ID de la entrada a eliminar.
+     */
+    void deleteById(Long entryId);
 }
