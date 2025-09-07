@@ -1,11 +1,18 @@
 package app.domain.model.vo;
 
+import jakarta.persistence.Embeddable;
+
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
-public class Username {
 
-    private final String value;
+@Embeddable
+public class Username implements Serializable {
+
+    private  String value;
+    protected Username(){}
     private final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9]{1,15}$");
+
 
 
     public Username(String value) {

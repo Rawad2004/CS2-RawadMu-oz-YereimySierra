@@ -5,12 +5,12 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @Embeddable
-public class BirthDate implements Serializable {
+public class DateOfBirth implements Serializable {
 
     private LocalDate value;
 
 
-    public BirthDate(LocalDate value) {
+    public DateOfBirth(LocalDate value) {
 
         System.out.println("-----------------------------------------");
         System.out.println("DEBUG: Entrando al constructor de BirthDate");
@@ -37,4 +37,6 @@ public class BirthDate implements Serializable {
     public LocalDate getValue() {
         return value;
     }
+
+    protected DateOfBirth(){}
 }

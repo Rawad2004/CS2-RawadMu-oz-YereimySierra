@@ -1,9 +1,16 @@
 // File: src/main/java/app/domain/model/vo/BloodPressure.java
 package app.domain.model.vo;
 
-public class BloodPressure {
-    private final Double systolic;
-    private final Double diastolic;
+import jakarta.persistence.*;
+
+import java.io.Serializable;
+
+@Embeddable
+public class BloodPressure implements Serializable {
+    private  Double systolic;
+    private  Double diastolic;
+
+    protected BloodPressure(){}
 
     public BloodPressure(Double systolic, Double diastolic) {
         if (systolic == null || diastolic == null) {

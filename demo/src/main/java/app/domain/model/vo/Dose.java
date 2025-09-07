@@ -1,8 +1,15 @@
 // File: src/main/java/app/domain/model/vo/Dose.java
 package app.domain.model.vo;
 
-public class Dose {
-    private final String value;
+
+import jakarta.persistence.*;
+
+import java.io.Serializable;
+
+@Embeddable
+public class Dose implements Serializable {
+    private  String value;
+    protected Dose(){}
 
     public Dose(String value) {
         if (value == null || value.trim().isEmpty()) {

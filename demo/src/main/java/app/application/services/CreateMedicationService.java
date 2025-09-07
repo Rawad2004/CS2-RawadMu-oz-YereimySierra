@@ -4,7 +4,7 @@ import app.application.dto.CreateMedicationCommand;
 import app.application.usecases.SupportUseCases.CreateMedicationUseCase;
 import app.domain.model.Medication;
 import app.domain.model.vo.Money;
-import app.domain.repository.MedicationRepositoryPort;
+import app.infrastructure.persistence.jpa.MedicationJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CreateMedicationService implements CreateMedicationUseCase {
 
-    private final MedicationRepositoryPort medicationRepository;
+    private final MedicationJpaRepository medicationRepository;
 
-    public CreateMedicationService(MedicationRepositoryPort medicationRepository) {
+    public CreateMedicationService(MedicationJpaRepository medicationRepository) {
         this.medicationRepository = medicationRepository;
     }
 

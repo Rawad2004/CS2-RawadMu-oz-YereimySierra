@@ -1,12 +1,19 @@
 package app.domain.model.vo;
 
+import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class InsurancePolicy {
-    private final String companyName;
-    private final String policyNumber;
-    private final boolean active;
-    private final LocalDate expiryDate;
+
+@Embeddable
+public class InsurancePolicy implements Serializable {
+    private String companyName;
+    private String policyNumber;
+    private boolean active;
+    private LocalDate expiryDate;
+
+    protected InsurancePolicy(){}
 
     public InsurancePolicy(String companyName,String policyNumber,boolean active,LocalDate expiryDate){
         this.companyName=companyName;

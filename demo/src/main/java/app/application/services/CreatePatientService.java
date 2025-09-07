@@ -43,7 +43,7 @@ public class CreatePatientService implements CreatePatientUseCase {
         Patient newPatient = new Patient(
                 nationalId,
                 command.fullName(),
-                new BirthDate(command.birthDate()),
+                new DateOfBirth(command.birthDate()),
                 command.gender(),
                 new Address(command.address()),
                 new PhoneNumber(command.phoneNumber()),

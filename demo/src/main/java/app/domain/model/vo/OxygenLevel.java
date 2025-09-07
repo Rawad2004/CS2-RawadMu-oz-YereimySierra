@@ -1,8 +1,15 @@
 // File: src/main/java/app/domain/model/vo/OxygenLevel.java
 package app.domain.model.vo;
 
-public class OxygenLevel {
-    private final Double value; // porcentaje
+
+import jakarta.persistence.*;
+
+import java.io.Serializable;
+
+@Embeddable
+public class OxygenLevel implements Serializable {
+    private Double value;
+    protected OxygenLevel(){}
 
     public OxygenLevel(Double value) {
         if (value == null) {

@@ -1,4 +1,9 @@
 package app.infrastructure.persistence.jpa;
 
-public class OrderJpaRepository {
+import app.domain.model.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface OrderJpaRepository extends JpaRepository<Order, Long> {
+    Optional<Order> findByOrderNumber(String orderNumber);
 }

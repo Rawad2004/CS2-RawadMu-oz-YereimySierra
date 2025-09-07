@@ -2,6 +2,7 @@ package app.domain.model;
 
 import app.domain.model.order.OrderItem;
 import app.domain.model.vo.NationalId;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -9,14 +10,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Entity
+@Table(name = "orders")
 public class Order {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private final String orderNumber;
-    private final NationalId patientId;
-    private final NationalId doctorId;
-    private final LocalDate creationDate;
-    private final List<OrderItem> items;
+    private String orderNumber;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "patient_national_id"))
+    })
+    private NationalId patientId;
+    @Embedded
+    @AttributeOverrides({
+            // Renombra la columna "value" del NationalId del doctor a "doctor_national_id"
+            @AttributeOverride(name = "value", column = @Column(name = "doctor_national_id"))
+    })
+    private NationalId doctorId;
+    private LocalDate creationDate;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id")
+    private List<OrderItem> items;
+
+    protected Order() {
+    }
 
     public Order(String orderNumber, NationalId patientId, NationalId doctorId) {
         this.orderNumber = orderNumber;

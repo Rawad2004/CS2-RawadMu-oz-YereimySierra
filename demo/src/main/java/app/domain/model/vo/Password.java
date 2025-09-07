@@ -1,11 +1,17 @@
 package app.domain.model.vo;
 
+import jakarta.persistence.Embeddable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
-public class Password {
+@Embeddable
+public class Password implements Serializable {
 
-    private final String hashedPassword;
+    private  String hashedPassword;
+    protected Password(){}
+
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{8,}$");
     private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

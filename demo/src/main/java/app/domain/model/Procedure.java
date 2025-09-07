@@ -1,12 +1,21 @@
 package app.domain.model;
 
 import app.domain.model.vo.Money;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "procedures")
 public class Procedure {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "cost"))
+    })
     private Money cost;
+    protected Procedure(){}
 
     public Procedure(String name, Money cost) {
         if (name == null || name.trim().isEmpty()) {

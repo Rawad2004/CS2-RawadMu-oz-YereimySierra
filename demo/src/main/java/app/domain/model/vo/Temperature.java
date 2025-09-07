@@ -1,8 +1,14 @@
 // File: src/main/java/app/domain/model/vo/Temperature.java
 package app.domain.model.vo;
 
-public class Temperature {
-    private final Double value; // en Celsius
+import jakarta.persistence.*;
+
+import java.io.Serializable;
+
+@Embeddable
+public class Temperature implements Serializable {
+    private Double value; // en Celsius
+    protected Temperature(){}
 
     public Temperature(Double value) {
         if (value == null) {

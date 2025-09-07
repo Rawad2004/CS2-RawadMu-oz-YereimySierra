@@ -2,19 +2,35 @@
 package app.domain.model;
 
 import app.domain.model.vo.NationalId;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "clinical_history_entries")
 public class ClinicalHistoryEntry {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private final NationalId patientId;
-    private final NationalId doctorId;
-    private final LocalDate visitDate;
-    private final String reasonForVisit;
-    private final String symptomatology;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "patient_national_id"))
+    })
+    private  NationalId patientId;
+    @Embedded
+    @AttributeOverrides({
+            // Renombra la columna "value" del NationalId del doctor a "doctor_national_id"
+            @AttributeOverride(name = "value", column = @Column(name = "doctor_national_id"))
+    })
+    private  NationalId doctorId;
+    private  LocalDate visitDate;
+    private  String reasonForVisit;
+    private  String symptomatology;
     private String diagnosis;
     private LocalDate lastUpdateDate;
     private String updateNotes;
+
+    protected ClinicalHistoryEntry() {}
 
     public ClinicalHistoryEntry(NationalId patientId, NationalId doctorId, LocalDate visitDate,
                                 String reasonForVisit, String symptomatology, String diagnosis) {

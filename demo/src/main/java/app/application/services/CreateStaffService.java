@@ -35,7 +35,7 @@ public class CreateStaffService implements CreateStaffUseCase {
                 nationalId,
                 new Email(command.email()),
                 new PhoneNumber(command.phoneNumber()),
-                new BirthDate(command.birthDate()),
+                new DateOfBirth(command.birthDate()),
                 new Address(command.address()),
                 command.role(),
                 username,

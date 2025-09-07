@@ -1,12 +1,22 @@
 package app.domain.model;
 
 import app.domain.model.vo.Money;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "diagnostic_aids")
 public class DiagnosticAid {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "cost"))
+    })
     private Money cost;
+
+    protected DiagnosticAid() {}
 
     public DiagnosticAid(String name, Money cost) {
         if (name == null || name.trim().isEmpty()) {

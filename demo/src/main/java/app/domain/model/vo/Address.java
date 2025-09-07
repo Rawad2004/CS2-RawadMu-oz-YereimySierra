@@ -1,8 +1,14 @@
 package app.domain.model.vo;
 
-public class Address {
+import jakarta.persistence.*;
 
-    private final String value;
+import java.io.Serializable;
+
+@Embeddable
+public class Address implements Serializable {
+
+    private String value;
+    protected Address() {}
     private static final int MAX_LENGTH = 30;
 
     public Address(String value) {

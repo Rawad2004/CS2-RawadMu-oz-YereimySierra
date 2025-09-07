@@ -6,8 +6,8 @@ import app.application.usecases.NurseUseCases.RecordMedicationAdministrationUseC
 import app.domain.model.Patient;
 import app.domain.model.vo.Dose;
 import app.domain.model.vo.NationalId;
-import app.domain.repository.MedicationRepositoryPort;
 import app.domain.repository.PatientRepositoryPort;
+import app.infrastructure.persistence.jpa.MedicationJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class RecordMedicationAdministrationService implements RecordMedicationAdministrationUseCase {
 
     private final PatientRepositoryPort patientRepository;
-    private final MedicationRepositoryPort medicationRepository;
+    private final MedicationJpaRepository medicationRepository;
 
     public RecordMedicationAdministrationService(PatientRepositoryPort patientRepository,
-                                                 MedicationRepositoryPort medicationRepository) {
+                                                 MedicationJpaRepository medicationRepository) {
         this.patientRepository = patientRepository;
         this.medicationRepository = medicationRepository;
     }

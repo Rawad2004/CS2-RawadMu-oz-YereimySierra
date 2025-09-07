@@ -1,8 +1,14 @@
 // File: src/main/java/app/domain/model/vo/Pulse.java
 package app.domain.model.vo;
 
-public class Pulse {
-    private final Integer value; // latidos por minuto
+import jakarta.persistence.*;
+
+import java.io.Serializable;
+
+@Embeddable
+public class Pulse implements Serializable {
+    private Integer value; // latidos por minuto
+    protected Pulse(){}
 
     public Pulse(Integer value) {
         if (value == null) {

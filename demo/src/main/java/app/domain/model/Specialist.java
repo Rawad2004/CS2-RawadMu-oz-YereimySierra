@@ -1,6 +1,12 @@
 package app.domain.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "specialists")
 public class Specialist {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String specialtyName;
 
@@ -17,4 +23,6 @@ public class Specialist {
     public void setId(Long id){
         this.id=id;
     }
+
+    protected Specialist() {}
 }

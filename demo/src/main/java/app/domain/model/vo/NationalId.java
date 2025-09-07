@@ -1,8 +1,14 @@
 package app.domain.model.vo;
 
-public class NationalId {
+import jakarta.persistence.*;
 
-    private final String value;
+import java.io.Serializable;
+
+@Embeddable
+public class NationalId implements Serializable {
+
+    private String value;
+    protected NationalId(){}
 
     public NationalId(String value) {
         if (!isValid(value)) {

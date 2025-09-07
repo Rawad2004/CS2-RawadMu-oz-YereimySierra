@@ -10,6 +10,7 @@ import app.domain.model.order.*;
 import app.domain.model.vo.NationalId;
 import app.domain.model.vo.StaffRole;
 import app.domain.repository.*;
+import app.infrastructure.persistence.jpa.MedicationJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import app.domain.exception.ResourceNotFoundException;
@@ -24,14 +25,14 @@ public class CreateOrderService implements CreateOrderUseCase {
     private final OrderRepositoryPort orderRepository;
     private final PatientRepositoryPort patientRepository;
     private final StaffRepositoryPort staffRepository;
-    private final MedicationRepositoryPort medicationRepository;
+    private final MedicationJpaRepository medicationRepository;
     private final ProcedureRepositoryPort procedureRepository;
     private final DiagnosticAidRepositoryPort diagnosticAidRepository;
     private final SpecialistRepositoryPort specialistRepository;
 
 
     public CreateOrderService(OrderRepositoryPort orderRepository, PatientRepositoryPort patientRepository,
-                              StaffRepositoryPort staffRepository, MedicationRepositoryPort medicationRepository,
+                              StaffRepositoryPort staffRepository, MedicationJpaRepository medicationRepository,
                               ProcedureRepositoryPort procedureRepository, DiagnosticAidRepositoryPort diagnosticAidRepository,
                               SpecialistRepositoryPort specialistRepository) {
         this.orderRepository = orderRepository;

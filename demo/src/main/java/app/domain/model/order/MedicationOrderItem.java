@@ -1,12 +1,16 @@
 package app.domain.model.order;
 
 import app.domain.model.Medication;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "medication_order_items")
 public class MedicationOrderItem extends OrderItem {
+    protected MedicationOrderItem() { super(); }
 
-    private final Long medicationId;
-    private final String dose;
-    private final String treatmentDuration;
+    private  Long medicationId;
+    private  String dose;
+    private  String treatmentDuration;
 
     public MedicationOrderItem(int itemNumber, Long medicationId, String dose, String treatmentDuration) {
         super(itemNumber);

@@ -1,4 +1,40 @@
 package app.infrastructure.persistence;
 
-public class OrderPersistenceAdapter {
+import app.domain.model.Order;
+import app.domain.model.vo.NationalId;
+import app.domain.repository.OrderRepositoryPort;
+import app.infrastructure.persistence.jpa.OrderJpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository // Le dice a Spring que esta es la implementación del repositorio
+public class OrderPersistenceAdapter implements OrderRepositoryPort {
+
+    private final OrderJpaRepository orderJpaRepository;
+
+    public OrderPersistenceAdapter(OrderJpaRepository orderJpaRepository) {
+        this.orderJpaRepository = orderJpaRepository;
+    }
+
+    @Override
+    public Order save(Order order) {
+        return orderJpaRepository.save(order);
+    }
+
+    @Override
+    public Optional<Order> findByOrderNumber(String orderNumber) {
+        return orderJpaRepository.findByOrderNumber(orderNumber);
+    }
+
+    @Override
+    public Optional<Order> findById(Long id) {
+        return orderJpaRepository.findById(id);
+    }
+
+    @Override
+    public List<Order> findByPatientId(NationalId patientId) {
+        return List.of();
+    }
 }

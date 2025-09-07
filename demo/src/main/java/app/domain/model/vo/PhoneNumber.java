@@ -1,8 +1,15 @@
 package app.domain.model.vo;
 
-public class PhoneNumber {
 
-    private final String value;
+import jakarta.persistence.*;
+
+import java.io.Serializable;
+
+@Embeddable
+public class PhoneNumber implements Serializable {
+
+    private String value;
+    protected PhoneNumber(){}
 
     public PhoneNumber(String value) {
         if (!isValid(value)){

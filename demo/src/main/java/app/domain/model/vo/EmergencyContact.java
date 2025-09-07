@@ -1,9 +1,17 @@
 package app.domain.model.vo;
 
-public class EmergencyContact {
-    private final String fullName;
-    private final String relationship;
-    private final PhoneNumber phoneNumber;
+
+import jakarta.persistence.*;
+
+import java.io.Serializable;
+
+@Embeddable
+public class EmergencyContact implements Serializable {
+    private  String fullName;
+    private  String relationship;
+    private  PhoneNumber phoneNumber;
+    protected EmergencyContact(){}
+
 
     public EmergencyContact(String fullName, String relationship, PhoneNumber phoneNumber){
         if (fullName == null || fullName.trim().isEmpty() || relationship == null || relationship.trim().isEmpty()){
