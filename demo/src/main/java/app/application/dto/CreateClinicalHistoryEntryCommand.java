@@ -25,24 +25,4 @@ public record CreateClinicalHistoryEntryCommand(
 
         String diagnosis
 ) {
-    public CreateClinicalHistoryEntryCommand {
-        if (patientNationalId == null || patientNationalId.trim().isEmpty()) {
-            throw new IllegalArgumentException("La cédula del paciente es obligatoria");
-        }
-        if (doctorNationalId == null || doctorNationalId.trim().isEmpty()) {
-            throw new IllegalArgumentException("La cédula del médico es obligatoria");
-        }
-        if (visitDate == null) {
-            throw new IllegalArgumentException("La fecha de la visita es obligatoria");
-        }
-        if (visitDate.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("La fecha de la visita no puede ser futura");
-        }
-        if (reasonForVisit == null || reasonForVisit.trim().isEmpty()) {
-            throw new IllegalArgumentException("El motivo de la consulta es obligatorio");
-        }
-        if (symptomatology == null || symptomatology.trim().isEmpty()) {
-            throw new IllegalArgumentException("La sintomatología es obligatoria");
-        }
-    }
 }

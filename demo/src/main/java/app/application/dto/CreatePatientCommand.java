@@ -47,17 +47,7 @@ public record CreatePatientCommand(
             @NotBlank(message = "El teléfono de emergencia es obligatorio")
             String phoneNumber
     ) {
-        public EmergencyContactData {
-            if (fullName == null || fullName.trim().isEmpty()) {
-                throw new IllegalArgumentException("El nombre del contacto de emergencia es obligatorio");
-            }
-            if (relationship == null || relationship.trim().isEmpty()) {
-                throw new IllegalArgumentException("La relación con el paciente es obligatoria");
-            }
-            if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
-                throw new IllegalArgumentException("El teléfono de emergencia es obligatorio");
-            }
-        }
+
     }
 
     public record InsurancePolicyData(
@@ -72,53 +62,7 @@ public record CreatePatientCommand(
             @NotNull(message = "La fecha de vigencia de la póliza es obligatoria")
             LocalDate expiryDate
     ) {
-        public InsurancePolicyData {
-            if (companyName == null || companyName.trim().isEmpty()) {
-                throw new IllegalArgumentException("El nombre de la compañía de seguros es obligatorio");
-            }
-            if (policyNumber == null || policyNumber.trim().isEmpty()) {
-                throw new IllegalArgumentException("El número de póliza es obligatorio");
-            }
-            if (expiryDate == null) {
-                throw new IllegalArgumentException("La fecha de vigencia de la póliza es obligatoria");
-            }
-        }
-    }
 
-    public CreatePatientCommand {
-        // Validaciones del paciente
-        if (nationalId == null || nationalId.trim().isEmpty()) {
-            throw new IllegalArgumentException("La cédula del paciente es obligatoria");
-        }
-        if (fullName == null || fullName.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre completo es obligatorio");
-        }
-        if (birthDate == null) {
-            throw new IllegalArgumentException("La fecha de nacimiento es obligatoria");
-        }
-        if (birthDate.isAfter(LocalDate.now().minusYears(150))) {
-            throw new IllegalArgumentException("La fecha de nacimiento no puede ser mayor a 150 años");
-        }
-        if (gender == null) {
-            throw new IllegalArgumentException("El género es obligatorio");
-        }
-        if (address == null || address.trim().isEmpty()) {
-            throw new IllegalArgumentException("La dirección es obligatoria");
-        }
-        if (address.length() > 30) {
-            throw new IllegalArgumentException("La dirección no puede exceder 30 caracteres");
-        }
-        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
-            throw new IllegalArgumentException("El número de teléfono es obligatorio");
-        }
-        if (emergencyContact == null) {
-            throw new IllegalArgumentException("El contacto de emergencia es obligatorio");
-        }
-        if (insurancePolicy == null) {
-            throw new IllegalArgumentException("La información del seguro médico es obligatoria");
         }
 
-        // Validar que solo haya un contacto de emergencia (mínimo y máximo uno)
-        // Esto está implícito en la estructura del record
-    }
 }

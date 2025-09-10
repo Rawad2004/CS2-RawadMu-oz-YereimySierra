@@ -24,19 +24,4 @@ public record RecordVitalSignsCommand(
         @NotNull(message = "El nivel de oxígeno es obligatorio")
         @Positive(message = "El nivel de oxígeno debe ser positivo")
         Double oxygenLevel
-) {
-    public RecordVitalSignsCommand {
-        if (systolicBloodPressure < diastolicBloodPressure) {
-            throw new IllegalArgumentException("La presión sistólica debe ser mayor que la diastólica");
-        }
-        if (temperature < 25.0 || temperature > 45.0) {
-            throw new IllegalArgumentException("La temperatura debe estar entre 25°C y 45°C");
-        }
-        if (pulse <= 0 || pulse > 250) {
-            throw new IllegalArgumentException("El pulso debe estar entre 1 y 250 lpm");
-        }
-        if (oxygenLevel < 0.0 || oxygenLevel > 100.0) {
-            throw new IllegalArgumentException("El nivel de oxígeno debe estar entre 0% y 100%");
-        }
-    }
-}
+) { }

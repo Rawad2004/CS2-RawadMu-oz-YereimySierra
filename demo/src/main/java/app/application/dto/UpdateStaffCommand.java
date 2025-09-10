@@ -17,10 +17,4 @@ public record UpdateStaffCommand(
 
         String password
 ) {
-    public UpdateStaffCommand {
-        // Validaciones básicas
-        if (nationalId == null || nationalId.trim().isEmpty()) {
-            throw new IllegalArgumentException("La cédula del staff es obligatoria");
-        }
-    }
 }

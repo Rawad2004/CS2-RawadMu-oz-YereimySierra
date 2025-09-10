@@ -14,12 +14,5 @@ public record CreateDiagnosticAidCommand(
         @Positive(message = "El costo debe ser un valor positivo")
         BigDecimal cost
 ) {
-    public CreateDiagnosticAidCommand {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre de la ayuda diagnóstica no puede ser nulo o vacío");
-        }
-        if (cost == null) {
-            throw new IllegalArgumentException("El costo no puede ser nulo");
-        }
-    }
+
 }

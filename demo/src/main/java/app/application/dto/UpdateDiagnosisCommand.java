@@ -16,19 +16,4 @@ public record UpdateDiagnosisCommand(
 
         @NotBlank(message = "El diagnóstico no puede estar vacío")
         String newDiagnosis
-) {
-    public UpdateDiagnosisCommand {
-        if (patientNationalId == null || patientNationalId.trim().isEmpty()) {
-            throw new IllegalArgumentException("La cédula del paciente es obligatoria");
-        }
-        if (visitDate == null) {
-            throw new IllegalArgumentException("La fecha de la visita es obligatoria");
-        }
-        if (visitDate.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("La fecha de la visita no puede ser futura");
-        }
-        if (newDiagnosis == null || newDiagnosis.trim().isEmpty()) {
-            throw new IllegalArgumentException("El diagnóstico no puede estar vacío");
-        }
-    }
-}
+) { }

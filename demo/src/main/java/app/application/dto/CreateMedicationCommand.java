@@ -14,15 +14,5 @@ public record CreateMedicationCommand(
         @Positive(message = "El costo debe ser un valor positivo")
         BigDecimal cost
 ) {
-    public CreateMedicationCommand {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre del medicamento no puede ser nulo o vacío");
-        }
-        if (cost == null) {
-            throw new IllegalArgumentException("El costo no puede ser nulo");
-        }
-        if (cost.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("El costo debe ser mayor a cero");
-        }
-    }
+
 }

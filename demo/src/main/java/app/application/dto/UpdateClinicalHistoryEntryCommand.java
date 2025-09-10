@@ -22,25 +22,4 @@ public record UpdateClinicalHistoryEntryCommand(
         @NotNull(message = "La fecha de actualización es obligatoria")
         @PastOrPresent(message = "La fecha de actualización no puede ser futura")
         LocalDate updateDate
-) {
-    public UpdateClinicalHistoryEntryCommand {
-        if (patientNationalId == null || patientNationalId.trim().isEmpty()) {
-            throw new IllegalArgumentException("La cédula del paciente es obligatoria");
-        }
-        if (originalVisitDate == null) {
-            throw new IllegalArgumentException("La fecha de la visita original es obligatoria");
-        }
-        if (originalVisitDate.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("La fecha de la visita original no puede ser futura");
-        }
-        if (newDiagnosis == null || newDiagnosis.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nuevo diagnóstico es obligatorio");
-        }
-        if (updateDate == null) {
-            throw new IllegalArgumentException("La fecha de actualización es obligatoria");
-        }
-        if (updateDate.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("La fecha de actualización no puede ser futura");
-        }
-    }
-}
+) { }

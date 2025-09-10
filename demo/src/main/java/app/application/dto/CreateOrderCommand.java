@@ -48,59 +48,5 @@ public record CreateOrderCommand(
             @Positive(message = "El ID del especialista debe ser positivo")
             Long specialistId
     ) {
-        public OrderItemData {
-            if (itemNumber == null || itemNumber <= 0) {
-                throw new IllegalArgumentException("El número de ítem debe ser positivo");
-            }
-            if (type == null) {
-                throw new IllegalArgumentException("El tipo de ítem es obligatorio");
-            }
-            if (itemId == null || itemId <= 0) {
-                throw new IllegalArgumentException("El ID del item es obligatorio y debe ser positivo");
-            }
-
-            // Validaciones específicas por tipo
-            if (type == OrderItemType.MEDICATION) {
-                if (dose == null || dose.trim().isEmpty()) {
-                    throw new IllegalArgumentException("La dosis es obligatoria para medicamentos");
-                }
-                if (treatmentDuration == null || treatmentDuration.trim().isEmpty()) {
-                    throw new IllegalArgumentException("La duración del tratamiento es obligatoria para medicamentos");
-                }
-            } else if (type == OrderItemType.PROCEDURE || type == OrderItemType.DIAGNOSTIC_AID) {
-                if (quantity == null || quantity <= 0) {
-                    throw new IllegalArgumentException("La cantidad es obligatoria y debe ser positiva");
-                }
-            }
-
-            if (requiresSpecialist != null && requiresSpecialist && specialistId == null) {
-                throw new IllegalArgumentException("Se requiere un especialista pero no se proporcionó el ID");
-            }
-        }
-    }
-
-    public CreateOrderCommand {
-        if (orderNumber == null || orderNumber.trim().isEmpty()) {
-            throw new IllegalArgumentException("El número de orden es obligatorio");
-        }
-        if (patientNationalId == null || patientNationalId.trim().isEmpty()) {
-            throw new IllegalArgumentException("La cédula del paciente es obligatoria");
-        }
-        if (doctorNationalId == null || doctorNationalId.trim().isEmpty()) {
-            throw new IllegalArgumentException("La cédula del médico es obligatoria");
-        }
-        if (items == null || items.isEmpty()) {
-            throw new IllegalArgumentException("La orden debe contener al menos un item");
-        }
-
-        // Validar que los números de ítem sean únicos
-        boolean hasDuplicateItems = items.stream()
-                .map(OrderItemData::itemNumber)
-                .distinct()
-                .count() != items.size();
-
-        if (hasDuplicateItems) {
-            throw new IllegalArgumentException("Los números de ítem deben ser únicos dentro de la orden");
-        }
     }
 }
