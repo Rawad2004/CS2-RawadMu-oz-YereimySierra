@@ -1,4 +1,3 @@
-// Ubicación: app.infrastructure.persistence/MedicationPersistenceAdapter.java
 package app.infrastructure.persistence;
 
 import app.domain.model.Medication;

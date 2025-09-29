@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/RecordVitalSignsService.java
 package app.application.services;
 
 import app.application.dto.RecordVitalSignsCommand;
@@ -25,15 +24,10 @@ public class RecordVitalSignsService implements RecordVitalSignsUseCase {
 
     @Override
     public Patient recordVitalSigns(String patientNationalId, RecordVitalSignsCommand command) {
-        // Validar y obtener el paciente
         Patient patient = patientRepository.findByNationalId(new NationalId(patientNationalId))
                 .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado con cédula: " + patientNationalId));
 
-        // Crear Value Objects con validaciones del dominio
-        BloodPressure bloodPressure = new BloodPressure(
-                command.systolicBloodPressure(),
-                command.diastolicBloodPressure()
-        );
+        BloodPressure bloodPressure = new BloodPressure(command.bloodPressure(), 0.0);
 
         Temperature temperature = new Temperature(command.temperature());
         Pulse pulse = new Pulse(command.pulse());
@@ -45,7 +39,6 @@ public class RecordVitalSignsService implements RecordVitalSignsUseCase {
         System.out.println("Pulso: " + pulse.toString());
         System.out.println("Oxígeno: " + oxygenLevel.toString());
 
-        // Retornar el paciente (en una implementación real, se retornaría el paciente actualizado)
         return patient;
     }
 }

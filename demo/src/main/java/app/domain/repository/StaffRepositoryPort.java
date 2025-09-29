@@ -5,6 +5,7 @@ import app.domain.model.Staff;
 import app.domain.model.vo.NationalId;
 import app.domain.model.vo.Username;
 
+import java.util.List; // Import añadido
 import java.util.Optional;
 
 public interface StaffRepositoryPort {
@@ -36,6 +37,12 @@ public interface StaffRepositoryPort {
      * @return Un Optional que contiene al Staff si se encuentra.
      */
     Optional<Staff> findByNationalId(NationalId nationalId);
+
+    /**
+     * Obtiene una lista de todos los miembros del personal.
+     * @return Una lista con todos los objetos Staff.
+     */
+    List<Staff> findAll(); // <-- MÉTODO AÑADIDO
 
     /**
      * Elimina un miembro del personal por su ID de base de datos.

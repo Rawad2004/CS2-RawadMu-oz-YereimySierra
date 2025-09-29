@@ -7,6 +7,7 @@ import app.domain.repository.StaffRepositoryPort;
 import app.infrastructure.persistence.jpa.StaffJpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -28,6 +29,10 @@ public class StaffPersistenceAdapter implements StaffRepositoryPort {
         return staffJpaRepository.findById(id);
     }
 
+    @Override
+    public List<Staff> findAll() {
+        return staffJpaRepository.findAll();
+    }
 
     @Override
     public Optional<Staff> findByUsername(Username username) {

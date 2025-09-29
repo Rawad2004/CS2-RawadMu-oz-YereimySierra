@@ -1,3 +1,4 @@
+// File: src/main/java/app/infrastructure/persistence/ClinicalHistoryEntryPersistenceAdapter.java
 package app.infrastructure.persistence;
 
 import app.domain.model.ClinicalHistoryEntry;
@@ -26,31 +27,40 @@ public class ClinicalHistoryEntryPersistenceAdapter implements ClinicalHistoryRe
 
     @Override
     public List<ClinicalHistoryEntry> findByPatientId(NationalId patientId) {
-        return clinicalHistoryRepository.findByPatientId(patientId);
+        // Como patientId es un @Embedded con "value", hay que usar el sufijo "_Value"
+        return clinicalHistoryRepository.findByPatientId_Value(patientId.getValue());
     }
 
     @Override
     public Optional<ClinicalHistoryEntry> findByPatientIdAndVisitDate(NationalId patientId, LocalDate visitDate) {
-        return clinicalHistoryRepository.findByPatientIdAndVisitDate(patientId, visitDate);
+        return clinicalHistoryRepository.findByPatientId_ValueAndVisitDate(patientId.getValue(), visitDate);
     }
 
     @Override
     public ClinicalHistoryEntry updateDiagnosis(Long entryId, String newDiagnosis, LocalDate updateDate) {
-        return null;
+        ClinicalHistoryEntry entry = clinicalHistoryRepository.findById(entryId)
+                .orElseThrow(() -> new IllegalArgumentException("Entrada no encontrada con id: " + entryId));
+
+        entry.updateDiagnosisWithNotes(newDiagnosis, null, updateDate);
+        return clinicalHistoryRepository.save(entry);
     }
 
     @Override
     public ClinicalHistoryEntry updateEntry(Long entryId, String newDiagnosis, String additionalNotes, LocalDate updateDate) {
-        return null;
+        ClinicalHistoryEntry entry = clinicalHistoryRepository.findById(entryId)
+                .orElseThrow(() -> new IllegalArgumentException("Entrada no encontrada con id: " + entryId));
+
+        entry.updateDiagnosisWithNotes(newDiagnosis, additionalNotes, updateDate);
+        return clinicalHistoryRepository.save(entry);
     }
 
     @Override
     public Optional<ClinicalHistoryEntry> findById(Long entryId) {
-        return Optional.empty();
+        return clinicalHistoryRepository.findById(entryId);
     }
 
     @Override
     public void deleteById(Long entryId) {
-
+        clinicalHistoryRepository.deleteById(entryId);
     }
 }

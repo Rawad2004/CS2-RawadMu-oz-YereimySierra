@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository // Le dice a Spring que esta es la implementación del repositorio
+@Repository
 public class OrderPersistenceAdapter implements OrderRepositoryPort {
 
     private final OrderJpaRepository orderJpaRepository;
@@ -35,6 +35,7 @@ public class OrderPersistenceAdapter implements OrderRepositoryPort {
 
     @Override
     public List<Order> findByPatientId(NationalId patientId) {
-        return List.of();
+
+        return orderJpaRepository.findByPatientId_Value(patientId.getValue());
     }
 }

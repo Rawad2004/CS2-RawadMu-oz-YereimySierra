@@ -7,6 +7,8 @@ import app.application.dto.CreateProcedureCommand;
 import app.application.dto.CreateSpecialistCommand;
 import app.domain.model.*;
 
+import java.util.List;
+
 public interface SupportUseCases {
 
     // Interface para crear medicamentos
@@ -31,5 +33,11 @@ public interface SupportUseCases {
     // Interface para crear especialistas
     interface CreateSpecialistUseCase {
         Specialist createSpecialist(CreateSpecialistCommand command);
+    }
+
+    interface FindMedicationUseCase {
+        Medication findById(Long id);
+        List<Medication> findAll();
+        Medication findByName(String name);
     }
 }
