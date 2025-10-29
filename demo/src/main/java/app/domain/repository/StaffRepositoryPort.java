@@ -1,4 +1,3 @@
-// Ubicación: src/main/java/app/domain/repository/StaffRepositoryPort.java
 package app.domain.repository;
 
 import app.domain.model.Staff;

@@ -2,7 +2,6 @@ package app.domain.model;
 
 import app.domain.model.vo.*;
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,58 +15,56 @@ public class Patient {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "national_id", unique = true))
+            @AttributeOverride(name = "value", column = @Column(name = "national_id", unique = true, nullable = false))
     })
     private NationalId nationalId;
 
+    @Column(name = "full_name", nullable = false)
     private String fullName;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "birth_date"))
+            @AttributeOverride(name = "value", column = @Column(name = "birth_date", nullable = false))
     })
     private DateOfBirth dateOfBirth;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Gender gender;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "address"))
+            @AttributeOverride(name = "value", column = @Column(name = "address", nullable = false))
     })
     private Address address;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "phone_number"))
+            @AttributeOverride(name = "value", column = @Column(name = "phone_number", nullable = false))
     })
     private PhoneNumber phoneNumber;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "email"))
+            @AttributeOverride(name = "value", column = @Column(name = "email", nullable = true))
     })
     private Email email;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "fullName", column = @Column(name = "emergency_contact_full_name")),
-            @AttributeOverride(name = "relationship", column = @Column(name = "emergency_contact_relationship")),
-            @AttributeOverride(name = "phoneNumber.value", column = @Column(name = "emergency_contact_phone_number"))
+            @AttributeOverride(name = "fullName", column = @Column(name = "emergency_contact_full_name", nullable = false)),
+            @AttributeOverride(name = "relationship", column = @Column(name = "emergency_contact_relationship", nullable = false)),
+            @AttributeOverride(name = "phoneNumber.value", column = @Column(name = "emergency_contact_phone_number", nullable = false))
     })
     private EmergencyContact emergencyContact;
 
     @Embedded
     private InsurancePolicy insurancePolicy;
 
-
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VitalSignsEntry> vitalSignsEntries = new ArrayList<>();
 
-
-    protected Patient() {
-
-    }
+    protected Patient() { /* JPA */ }
 
     public Patient(NationalId nationalId, String fullName,
                    DateOfBirth dateOfBirth, Gender gender,
@@ -85,7 +82,7 @@ public class Patient {
         this.insurancePolicy = insurancePolicy;
     }
 
-
+    // --- Actualizaciones de datos
     public void updateContactInfo(Address newAddress, PhoneNumber newPhoneNumber, Email newEmail) {
         this.address = newAddress;
         this.phoneNumber = newPhoneNumber;
@@ -96,18 +93,29 @@ public class Patient {
         this.insurancePolicy = newPolicy;
     }
 
+    // --- Agregado: composición de signos vitales
     public void addVitalSigns(VitalSignsEntry entry) {
-        entry.setPatient(this);
+        entry.setPatient(this);        // IMPORTANTÍSIMO para el lado dueño
         vitalSignsEntries.add(entry);
     }
 
+    public void removeVitalSigns(VitalSignsEntry entry) {
+        vitalSignsEntries.remove(entry); // orphans se eliminarán
+        entry.setPatient(null);
+    }
 
+    // --- Getters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
     public NationalId getNationalId() { return nationalId; }
     public String getFullName() { return fullName; }
+
+    // Alias claro para el VO
+    public DateOfBirth getDateOfBirth() { return dateOfBirth; }
+    // (si quieres conservar compatibilidad con código viejo)
     public DateOfBirth getBirthDate() { return dateOfBirth; }
+
     public Gender getGender() { return gender; }
     public Address getAddress() { return address; }
     public PhoneNumber getPhoneNumber() { return phoneNumber; }

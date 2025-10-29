@@ -7,31 +7,21 @@ import java.io.Serializable;
 
 @Embeddable
 public class BloodPressure implements Serializable {
-    private  Double systolic;
-    private  Double diastolic;
+    private Double value;
 
-    protected BloodPressure(){}
+    protected BloodPressure() {}
 
-    public BloodPressure(Double systolic, Double diastolic) {
-        if (systolic == null || diastolic == null) {
-            throw new IllegalArgumentException("La presión arterial no puede ser nula");
+    public BloodPressure(Double value) {
+        if (value == null || value <= 0) {
+            throw new IllegalArgumentException("La presión arterial debe ser positiva");
         }
-        if (systolic <= 0 || diastolic <= 0) {
-            throw new IllegalArgumentException("Los valores de presión arterial deben ser positivos");
-        }
-        if (systolic < diastolic) {
-            throw new IllegalArgumentException("La presión sistólica debe ser mayor que la diastólica");
-        }
-
-        this.systolic = systolic;
-        this.diastolic = diastolic;
+        this.value = value;
     }
 
-    public Double getSystolic() { return systolic; }
-    public Double getDiastolic() { return diastolic; }
+    public Double getValue() { return value; }
 
     @Override
     public String toString() {
-        return systolic + "/" + diastolic + " mmHg";
+        return value + " mmHg";
     }
 }
