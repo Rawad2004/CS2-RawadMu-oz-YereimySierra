@@ -1,6 +1,7 @@
 package app.infrastructure.persistence;
 
 import app.domain.model.Patient;
+import app.domain.model.vo.Email;
 import app.domain.model.vo.NationalId;
 import app.domain.repository.PatientRepositoryPort;
 import app.infrastructure.persistence.jpa.PatientJpaRepository;
@@ -46,5 +47,16 @@ public class PatientPersistenceAdapter implements PatientRepositoryPort {
     @Override
     public boolean existsByNationalId(NationalId nationalId) {
         return patientJpaRepository.existsByNationalId(nationalId);
+    }
+
+    @Override
+    public Optional<Patient> findByEmail(Email email) {
+        return patientJpaRepository.findByEmail(email);
+    }
+
+    // Y si agregaste existsByEmail:
+    @Override
+    public boolean existsByEmail(Email email) {
+        return patientJpaRepository.existsByEmail(email);
     }
 }

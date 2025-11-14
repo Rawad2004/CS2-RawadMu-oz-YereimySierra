@@ -1,6 +1,6 @@
 package app.application.services;
 
-import app.application.dto.UpdatePatientCommand;
+import app.application.port.in.UpdatePatientCommand;
 import app.application.usecases.AdministrativeUseCases.UpdatePatientUseCase;
 import app.domain.model.Patient;
 import app.domain.model.vo.*;
@@ -23,6 +23,11 @@ public class UpdatePatientService implements UpdatePatientUseCase {
         Patient existingPatient = patientRepository.findByNationalId(new NationalId(command.nationalId()))
                 .orElseThrow(() -> new IllegalArgumentException("Patient not found with national ID: " + command.nationalId()));
 
+        Email email = null;
+        if (command.email() != null && !command.email().trim().isEmpty()) {
+            email = new Email(command.email());
+        }
+
         EmergencyContact emergencyContact = new EmergencyContact(
                 command.emergencyContact().fullName(),
                 command.emergencyContact().relationship(),
@@ -39,7 +44,7 @@ public class UpdatePatientService implements UpdatePatientUseCase {
         existingPatient.updateContactInfo(
                 new Address(command.address()),
                 new PhoneNumber(command.phoneNumber()),
-                new Email(command.email())
+                email
         );
 
         existingPatient.updateInsurancePolicy(insurancePolicy);

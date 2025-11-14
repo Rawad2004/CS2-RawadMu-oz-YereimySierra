@@ -29,6 +29,6 @@ public class PhoneNumber implements Serializable {
             return false;
         }
 
-        return phoneNumber.matches("\\d{1,10}");
+        return phoneNumber.matches("\\d{10}");
     }
 }

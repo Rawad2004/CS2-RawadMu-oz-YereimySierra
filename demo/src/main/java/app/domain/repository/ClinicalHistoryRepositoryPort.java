@@ -2,59 +2,34 @@
 package app.domain.repository;
 
 import app.domain.model.ClinicalHistoryEntry;
-import app.domain.model.vo.NationalId;
+
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 public interface ClinicalHistoryRepositoryPort {
 
     ClinicalHistoryEntry save(ClinicalHistoryEntry entry);
 
-    /**
-     * Busca toda la historia clínica de un paciente.
-     * @param patientId La cédula del paciente.
-     * @return Una lista de todas las entradas de su historia.
-     */
-    List<ClinicalHistoryEntry> findByPatientId(NationalId patientId);
+    Optional<ClinicalHistoryEntry> findByPatientNationalId(String patientNationalId);
 
-    /**
-     * Busca una entrada específica de la historia por paciente y fecha.
-     * @param patientId La cédula del paciente.
-     * @param visitDate La fecha de la visita.
-     * @return Un Optional con la entrada si se encuentra.
-     */
-    Optional<ClinicalHistoryEntry> findByPatientIdAndVisitDate(NationalId patientId, LocalDate visitDate);
+    Optional<ClinicalHistoryEntry.VisitData> findVisitByPatientAndDate(String patientNationalId, LocalDate visitDate);
 
-    /**
-     * Actualiza el diagnóstico de una entrada de historia clínica.
-     * @param entryId ID de la entrada a actualizar.
-     * @param newDiagnosis Nuevo diagnóstico.
-     * @param updateDate Fecha de la actualización.
-     * @return La entrada actualizada.
-     */
-    ClinicalHistoryEntry updateDiagnosis(Long entryId, String newDiagnosis, LocalDate updateDate);
+    ClinicalHistoryEntry updateDiagnosis(String patientNationalId, LocalDate visitDate,
+                                         String newDiagnosis, String updateNotes);
 
-    /**
-     * Actualiza múltiples campos de una entrada de historia clínica.
-     * @param entryId ID de la entrada a actualizar.
-     * @param newDiagnosis Nuevo diagnóstico (opcional).
-     * @param additionalNotes Notas adicionales (opcional).
-     * @param updateDate Fecha de la actualización.
-     * @return La entrada actualizada.
-     */
-    ClinicalHistoryEntry updateEntry(Long entryId, String newDiagnosis, String additionalNotes, LocalDate updateDate);
+    ClinicalHistoryEntry addVisit(String patientNationalId, LocalDate visitDate,
+                                  String doctorNationalId, String reasonForVisit,
+                                  String symptomatology, String diagnosis, String orderNumber,
+                                  ClinicalHistoryEntry.OrderType orderType);
 
-    /**
-     * Busca una entrada por su ID.
-     * @param entryId ID de la entrada.
-     * @return Un Optional con la entrada si se encuentra.
-     */
-    Optional<ClinicalHistoryEntry> findById(Long entryId);
+    // NUEVO: Método para asociar orden a visita existente
+    ClinicalHistoryEntry associateOrderToVisit(String patientNationalId, LocalDate visitDate,
+                                               String orderNumber, ClinicalHistoryEntry.OrderType orderType);
 
-    /**
-     * Elimina una entrada de historia clínica.
-     * @param entryId ID de la entrada a eliminar.
-     */
-    void deleteById(Long entryId);
+    // NUEVO: Método para marcar como pendiente de diagnóstico
+    ClinicalHistoryEntry markVisitAsPendingDiagnostic(String patientNationalId, LocalDate visitDate);
+
+    boolean existsVisit(String patientNationalId, LocalDate visitDate);
+
+    void deleteVisit(String patientNationalId, LocalDate visitDate);
 }

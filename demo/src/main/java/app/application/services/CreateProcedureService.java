@@ -1,7 +1,7 @@
 package app.application.services;
 
 import app.application.usecases.SupportUseCases.CreateProcedureUseCase;
-import app.application.dto.CreateProcedureCommand;
+import app.application.port.in.CreateProcedureCommand;
 import app.domain.model.Procedure;
 import app.domain.model.vo.Money;
 import app.domain.repository.ProcedureRepositoryPort;

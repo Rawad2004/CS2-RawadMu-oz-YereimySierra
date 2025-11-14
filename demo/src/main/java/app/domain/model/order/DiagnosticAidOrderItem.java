@@ -1,13 +1,30 @@
 package app.domain.model.order;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "diagnostic_aid_order_items")
 public class DiagnosticAidOrderItem extends OrderItem {
 
-    private final Long diagnosticAidId;
-    private final int quantity;
-    private final boolean requiresSpecialist;
-    private final Long specialistId;
+    @Column(name = "diagnostic_aid_id", nullable = false)
+    private Long diagnosticAidId;
 
-    public DiagnosticAidOrderItem(int itemNumber, Long diagnosticAidId, int quantity, boolean requiresSpecialist, Long specialistId) {
+    @Column(name = "quantity", nullable = false)
+    private int quantity;
+
+    @Column(name = "requires_specialist", nullable = false)
+    private boolean requiresSpecialist;
+
+    @Column(name = "specialist_id")
+    private Long specialistId;
+
+    // Constructor protegido para JPA
+    protected DiagnosticAidOrderItem() {
+        super();
+    }
+
+    public DiagnosticAidOrderItem(int itemNumber, Long diagnosticAidId, int quantity,
+                                  boolean requiresSpecialist, Long specialistId) {
         super(itemNumber);
         if (requiresSpecialist && specialistId == null) {
             throw new IllegalArgumentException("Se requiere un especialista pero no se proveyó un ID.");
@@ -19,10 +36,13 @@ public class DiagnosticAidOrderItem extends OrderItem {
     }
 
     @Override
-    public String getType() { return "DIAGNOSTIC_AID"; }
+    public String getType() {
+        return "DIAGNOSTIC_AID";
+    }
 
-    public Long getDiagnosticAidId() {return diagnosticAidId;}
-    public int getQuantity() {return quantity;}
-    public boolean isRequiresSpecialist() {return requiresSpecialist;}
-    public Long getSpecialistId() {return specialistId;}
+    // Getters
+    public Long getDiagnosticAidId() { return diagnosticAidId; }
+    public int getQuantity() { return quantity; }
+    public boolean isRequiresSpecialist() { return requiresSpecialist; }
+    public Long getSpecialistId() { return specialistId; }
 }

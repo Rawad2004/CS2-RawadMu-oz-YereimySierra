@@ -1,53 +1,86 @@
 // File: src/main/java/app/application/services/RecordMedicationAdministrationService.java
 package app.application.services;
 
-import app.application.dto.RecordMedicationAdministrationCommand;
+import app.application.port.in.RecordMedicationAdministrationCommand;
 import app.application.usecases.NurseUseCases.RecordMedicationAdministrationUseCase;
-import app.domain.model.Patient;
+import app.domain.model.*;
+import app.domain.model.order.MedicationOrderItem;
 import app.domain.model.vo.Dose;
 import app.domain.model.vo.NationalId;
-import app.domain.repository.PatientRepositoryPort;
-import app.infrastructure.persistence.jpa.MedicationJpaRepository;
+import app.domain.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
 public class RecordMedicationAdministrationService implements RecordMedicationAdministrationUseCase {
 
     private final PatientRepositoryPort patientRepository;
-    private final MedicationJpaRepository medicationRepository;
+    private final MedicationRepositoryPort medicationRepository; // ✅ CORREGIDO
+    private final OrderRepositoryPort orderRepository;
 
     public RecordMedicationAdministrationService(PatientRepositoryPort patientRepository,
-                                                 MedicationJpaRepository medicationRepository) {
+                                                 MedicationRepositoryPort medicationRepository,
+                                                 OrderRepositoryPort orderRepository) {
         this.patientRepository = patientRepository;
         this.medicationRepository = medicationRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Override
     public Patient recordMedicationAdministration(String patientNationalId, RecordMedicationAdministrationCommand command) {
-        // Validar y obtener el paciente
+        // 1. Validar que el paciente existe
         Patient patient = patientRepository.findByNationalId(new NationalId(patientNationalId))
                 .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado con cédula: " + patientNationalId));
 
-        // Validar que el medicamento exista
-        medicationRepository.findById(command.medicationId())
+        // 2. Validar que el medicamento existe
+        Medication medication = medicationRepository.findById(command.medicationId())
                 .orElseThrow(() -> new IllegalArgumentException("Medicamento no encontrado con ID: " + command.medicationId()));
 
-        // Crear Value Objects con validaciones del dominio
-        Dose dose = new Dose(command.dose());
-
-        // Validar que la hora de administración no sea futura
-        if (command.administrationTime().isAfter(java.time.LocalDateTime.now())) {
+        // 3. Validar que la hora de administración no sea futura
+        if (command.administrationTime().isAfter(LocalDateTime.now())) {
             throw new IllegalArgumentException("La hora de administración no puede ser futura");
         }
 
-        System.out.println("Registrando administración de medicamento para paciente: " + patientNationalId);
-        System.out.println("Medicamento ID: " + command.medicationId());
-        System.out.println("Dosis: " + dose.getValue());
-        System.out.println("Hora de administración: " + command.administrationTime());
+        // 4. Validar que existe una orden activa con este medicamento para el paciente
+        validateActiveMedicationOrder(patientNationalId, command.medicationId(), command.dose());
 
-        // Retornar el paciente (en una implementación real, se retornaría el paciente actualizado)
+        // 5. Crear Value Objects con validaciones
+        Dose dose = new Dose(command.dose());
+
+        // 6. Registrar la administración (en una implementación real, crearíamos una entidad MedicationAdministration)
+        System.out.println("✅ Administración registrada - Paciente: " + patientNationalId +
+                ", Medicamento: " + medication.getName() +
+                ", Dosis: " + dose.getValue() +
+                ", Hora: " + command.administrationTime());
+
         return patient;
+    }
+
+    private void validateActiveMedicationOrder(String patientNationalId, Long medicationId, String dose) {
+        // Buscar todas las órdenes del paciente
+        List<Order> patientOrders = orderRepository.findByPatientId(new NationalId(patientNationalId));
+
+        boolean hasActiveOrder = patientOrders.stream()
+                .filter(order -> !order.getCreationDate().isBefore(LocalDateTime.now().minusMonths(1).toLocalDate())) // Órdenes de último mes
+                .anyMatch(order -> order.getItems().stream()
+                        .anyMatch(item -> {
+                            if (item instanceof MedicationOrderItem) {
+                                MedicationOrderItem medItem = (MedicationOrderItem) item;
+                                return medItem.getMedicationId().equals(medicationId) &&
+                                        medItem.getDose().equals(dose);
+                            }
+                            return false;
+                        }));
+
+        if (!hasActiveOrder) {
+            throw new IllegalStateException(
+                    "No existe una orden activa que autorice la administración de este medicamento " +
+                            "con la dosis especificada para el paciente: " + patientNationalId
+            );
+        }
     }
 }

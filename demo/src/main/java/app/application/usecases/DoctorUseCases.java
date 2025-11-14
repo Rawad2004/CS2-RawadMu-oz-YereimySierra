@@ -1,12 +1,14 @@
 // File: src/main/java/app/application/usecases/DoctorUseCases.java
 package app.application.usecases;
 
-import app.application.dto.CreateClinicalHistoryEntryCommand;
-import app.application.dto.CreateOrderCommand;
-import app.application.dto.UpdateClinicalHistoryEntryCommand;
-import app.application.dto.UpdateDiagnosisCommand;
+import app.application.port.in.CreateClinicalHistoryEntryCommand;
+import app.application.port.in.CreateOrderCommand;
+import app.application.port.in.UpdateClinicalHistoryEntryCommand;
+import app.application.port.in.UpdateDiagnosisCommand;
 import app.domain.model.ClinicalHistoryEntry;
 import app.domain.model.Order;
+
+import java.time.LocalDate;
 
 public interface DoctorUseCases {
 
@@ -24,5 +26,23 @@ public interface DoctorUseCases {
 
     interface CreateOrderUseCase {
         Order createOrder(CreateOrderCommand command);
+    }
+
+    // NUEVOS USE CASES ESPECÍFICOS
+    interface UpdateDiagnosisOnlyUseCase {
+        ClinicalHistoryEntry updateDiagnosisOnly(String patientNationalId, LocalDate visitDate, String newDiagnosis);
+    }
+
+    interface UpdateDiagnosisAfterDiagnosticAidUseCase {
+        ClinicalHistoryEntry updateDiagnosisAfterDiagnosticAid(String patientNationalId, LocalDate diagnosticVisitDate,
+                                                               String diagnosis, String diagnosticResults);
+    }
+
+    interface AddVisitNotesUseCase {
+        ClinicalHistoryEntry addVisitNotes(String patientNationalId, LocalDate visitDate, String additionalNotes);
+    }
+
+    interface CompleteVisitUseCase {
+        ClinicalHistoryEntry completeVisit(String patientNationalId, LocalDate visitDate, String completionNotes);
     }
 }

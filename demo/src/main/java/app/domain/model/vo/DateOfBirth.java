@@ -26,7 +26,7 @@ public class DateOfBirth implements Serializable {
             throw new IllegalArgumentException("La fecha de nacimiento no puede ser nula.");
         }
         if (value.isBefore(LocalDate.now().minusYears(150))) {
-            throw new IllegalArgumentException("La fecha de nacimiento no puede ser mayor a 150 años");
+            throw new IllegalArgumentException("La fecha de nacimiento no puede ser hace más de 150 años");
         }
         if (value.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("La fecha de nacimiento no puede ser en el futuro");

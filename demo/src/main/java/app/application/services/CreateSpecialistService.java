@@ -1,7 +1,7 @@
 package app.application.services;
 
 import app.application.usecases.SupportUseCases.CreateSpecialistUseCase;
-import app.application.dto.CreateSpecialistCommand;
+import app.application.port.in.CreateSpecialistCommand;
 import app.domain.model.Specialist;
 import app.domain.repository.SpecialistRepositoryPort;
 import org.springframework.stereotype.Service;

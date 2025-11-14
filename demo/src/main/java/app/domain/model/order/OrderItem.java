@@ -2,17 +2,22 @@ package app.domain.model.order;
 
 import jakarta.persistence.*;
 
+import jakarta.persistence.*;
+
 @Entity
 @Table(name = "order_items")
 @Inheritance(strategy = InheritanceType.JOINED)
-public  abstract class OrderItem {
+public abstract class OrderItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private final int itemNumber;
+    @Column(name = "item_number", nullable = false)
+    private int itemNumber;
+
+    // Constructor protegido para JPA
     protected OrderItem() {
-        this.itemNumber = 0;
     }
 
     protected OrderItem(int itemNumber) {
@@ -22,10 +27,9 @@ public  abstract class OrderItem {
         this.itemNumber = itemNumber;
     }
 
-    public int getItemNumber() {
-        return itemNumber;
-    }
-
+    // Getters
+    public Long getId() { return id; }
+    public int getItemNumber() { return itemNumber; }
 
     public abstract String getType();
 }

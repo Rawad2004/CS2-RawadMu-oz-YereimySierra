@@ -1,14 +1,11 @@
 // File: src/main/java/app/application/services/RecordVitalSignsService.java
 package app.application.services;
 
-import app.application.dto.RecordVitalSignsCommand;
+import app.application.port.in.RecordVitalSignsCommand;
 import app.application.usecases.NurseUseCases.RecordVitalSignsUseCase;
 import app.domain.model.Patient;
 import app.domain.model.VitalSignsEntry;
-import app.domain.model.vo.NationalId;
-import app.domain.model.vo.OxygenLevel;
-import app.domain.model.vo.Pulse;
-import app.domain.model.vo.Temperature;
+import app.domain.model.vo.*;
 import app.domain.repository.PatientRepositoryPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,29 +24,34 @@ public class RecordVitalSignsService implements RecordVitalSignsUseCase {
 
     @Override
     public Patient recordVitalSigns(String patientNationalId, RecordVitalSignsCommand command) {
-
         Patient patient = patientRepository.findByNationalId(new NationalId(patientNationalId))
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Paciente no encontrado con cédula: " + patientNationalId));
 
+        // Crear Value Objects
+        BloodPressure bloodPressure = new BloodPressure(command.bloodPressure());
+        Temperature temperature = new Temperature(command.temperature());
+        Pulse pulse = new Pulse(command.pulse());
+        OxygenLevel oxygenLevel = new OxygenLevel(command.oxygenLevel());
 
-        new Temperature(command.temperature());
-        new Pulse(command.pulse());
-        new OxygenLevel(command.oxygenLevel());
-
-
+        // Crear entrada con Value Objects directamente
         VitalSignsEntry entry = new VitalSignsEntry(
-                command.bloodPressure(),
-                command.temperature(),
-                command.pulse(),
-                command.oxygenLevel(),
-                LocalDate.now()
+                bloodPressure,    // BloodPressure VO
+                temperature,      // Temperature VO
+                pulse,            // Pulse VO
+                oxygenLevel,      // OxygenLevel VO
+                LocalDate.now()   // LocalDate
         );
 
-
         patient.addVitalSigns(entry);
-        patientRepository.save(patient);
+        Patient savedPatient = patientRepository.save(patient);
 
-        return patient;
+        System.out.println("✅ Signos vitales registrados - Paciente: " + patientNationalId +
+                ", Presión: " + bloodPressure.getValue() +
+                ", Temp: " + temperature.getValue() +
+                ", Pulso: " + pulse.getValue() +
+                ", Oxígeno: " + oxygenLevel.getValue());
+
+        return savedPatient;
     }
 }

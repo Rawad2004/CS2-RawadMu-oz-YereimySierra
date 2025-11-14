@@ -1,7 +1,7 @@
 package app.application.services;
 
 import app.application.usecases.SupportUseCases.CreateDiagnosticAidUseCase;
-import app.application.dto.CreateDiagnosticAidCommand;
+import app.application.port.in.CreateDiagnosticAidCommand;
 import app.domain.model.DiagnosticAid;
 import app.domain.model.vo.Money;
 import app.domain.repository.DiagnosticAidRepositoryPort;

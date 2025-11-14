@@ -1,5 +1,6 @@
     package app.domain.model;
 
+    import app.domain.model.enums.StaffRole;
     import app.domain.model.vo.*;
     import jakarta.persistence.*;
 
@@ -74,6 +75,9 @@
 
         protected Staff(){}
 
+        public boolean isActive() {
+            return true; // Por ahora siempre activo, pero puedes agregar lógica
+        }
 
         public void updateContactInfo(Address newAddress, PhoneNumber newPhoneNumber, Email newEmail) {
             this.address = newAddress;

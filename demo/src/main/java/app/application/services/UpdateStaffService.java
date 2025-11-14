@@ -1,6 +1,6 @@
 package app.application.services;
 
-import app.application.dto.UpdateStaffCommand;
+import app.application.port.in.UpdateStaffCommand;
 import app.application.usecases.HHRRUseCase;
 import app.domain.exception.ResourceNotFoundException;
 import app.domain.model.Staff;

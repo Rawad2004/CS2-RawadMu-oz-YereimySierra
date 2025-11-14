@@ -1,7 +1,7 @@
 package app.application.usecases;
 
-import app.application.dto.CreateStaffCommand;
-import app.application.dto.UpdateStaffCommand;
+import app.application.port.in.CreateStaffCommand;
+import app.application.port.in.UpdateStaffCommand;
 import app.domain.model.Staff;
 
 import java.util.List;

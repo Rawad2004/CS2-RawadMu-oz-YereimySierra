@@ -1,20 +1,21 @@
 package app.application.services;
 
-import app.application.dto.CreateOrderCommand;
+import app.application.port.in.CreateOrderCommand;
 import app.application.usecases.DoctorUseCases.CreateOrderUseCase;
-import app.application.usecases.OrderItemType;
+import app.domain.model.enums.OrderItemType;
 import app.domain.model.Order;
 import app.domain.model.Patient;
 import app.domain.model.Staff;
 import app.domain.model.order.*;
 import app.domain.model.vo.NationalId;
-import app.domain.model.vo.StaffRole;
+import app.domain.model.enums.StaffRole;
 import app.domain.repository.*;
-import app.infrastructure.persistence.jpa.MedicationJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import app.domain.exception.ResourceNotFoundException;
 
+
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,16 +26,17 @@ public class CreateOrderService implements CreateOrderUseCase {
     private final OrderRepositoryPort orderRepository;
     private final PatientRepositoryPort patientRepository;
     private final StaffRepositoryPort staffRepository;
-    private final MedicationJpaRepository medicationRepository;
+    private final MedicationRepositoryPort medicationRepository;
     private final ProcedureRepositoryPort procedureRepository;
     private final DiagnosticAidRepositoryPort diagnosticAidRepository;
     private final SpecialistRepositoryPort specialistRepository;
+    private final OrderInvoiceTriggerService orderInvoiceTriggerService; // ✅ NUEVA DEPENDENCIA
 
 
     public CreateOrderService(OrderRepositoryPort orderRepository, PatientRepositoryPort patientRepository,
-                              StaffRepositoryPort staffRepository, MedicationJpaRepository medicationRepository,
+                              StaffRepositoryPort staffRepository, MedicationRepositoryPort medicationRepository, // ✅ CORREGIDO
                               ProcedureRepositoryPort procedureRepository, DiagnosticAidRepositoryPort diagnosticAidRepository,
-                              SpecialistRepositoryPort specialistRepository) {
+                              SpecialistRepositoryPort specialistRepository, OrderInvoiceTriggerService orderInvoiceTriggerService)  {
         this.orderRepository = orderRepository;
         this.patientRepository = patientRepository;
         this.staffRepository = staffRepository;
@@ -42,6 +44,7 @@ public class CreateOrderService implements CreateOrderUseCase {
         this.procedureRepository = procedureRepository;
         this.diagnosticAidRepository = diagnosticAidRepository;
         this.specialistRepository = specialistRepository;
+        this.orderInvoiceTriggerService = orderInvoiceTriggerService;
     }
 
     @Override
@@ -52,7 +55,6 @@ public class CreateOrderService implements CreateOrderUseCase {
         if (patientOptional.isEmpty()) {
             throw new ResourceNotFoundException("Paciente no encontrado con la cédula: " + patientId.getValue());
         }
-
 
         NationalId doctorId = new NationalId(command.doctorNationalId());
         Optional<Staff> staffOptional = staffRepository.findByNationalId(doctorId);
@@ -70,6 +72,9 @@ public class CreateOrderService implements CreateOrderUseCase {
 
         Order order = new Order(command.orderNumber(), patientId, doctorId);
 
+        validateOrderItemCompatibility(command.items());
+
+
 
         for (CreateOrderCommand.OrderItemData itemData : command.items()) {
             OrderItem newItem;
@@ -84,9 +89,46 @@ public class CreateOrderService implements CreateOrderUseCase {
             order.addItem(newItem);
         }
 
+        Order savedOrder = orderRepository.save(order);
+        orderInvoiceTriggerService.onOrderCreated(savedOrder);
         return orderRepository.save(order);
     }
 
+    private void validateOrderItemCompatibility(List<CreateOrderCommand.OrderItemData> items) {
+        boolean hasDiagnosticAid = items.stream().anyMatch(item -> item.type() == OrderItemType.DIAGNOSTIC_AID);
+        boolean hasOtherTypes = items.stream().anyMatch(item ->
+                item.type() == OrderItemType.MEDICATION || item.type() == OrderItemType.PROCEDURE);
+
+        if (hasDiagnosticAid && hasOtherTypes) {
+            throw new IllegalStateException(
+                    "Una orden con ayuda diagnóstica no puede contener medicamentos o procedimientos. " +
+                            "Las ayudas diagnósticas deben ser órdenes separadas."
+            );
+        }
+
+        // VALIDACIÓN: Unicidad de números de ítem
+        long distinctItemNumbers = items.stream()
+                .map(CreateOrderCommand.OrderItemData::itemNumber)
+                .distinct()
+                .count();
+
+        if (distinctItemNumbers != items.size()) {
+            throw new IllegalStateException("Los números de ítem deben ser únicos dentro de la orden.");
+        }
+
+        // VALIDACIÓN: Números de ítem consecutivos comenzando desde 1
+        boolean hasValidItemNumbers = items.stream()
+                .map(CreateOrderCommand.OrderItemData::itemNumber)
+                .sorted()
+                .allMatch(itemNumber -> itemNumber >= 1 && itemNumber <= items.size());
+
+        if (!hasValidItemNumbers) {
+            throw new IllegalStateException(
+                    "Los números de ítem deben ser consecutivos comenzando desde 1. " +
+                            "Ejemplo: 1, 2, 3..."
+            );
+        }
+    }
 
     private MedicationOrderItem createMedicationItem(CreateOrderCommand.OrderItemData data) {
         if (medicationRepository.findById(data.itemId()).isEmpty()) {

@@ -1,13 +1,13 @@
 package app.infrastructure.gui;
 
-import app.application.dto.*;
+import app.application.port.in.*;
 import app.application.usecases.*;
 import app.domain.model.ClinicalHistoryEntry;
 
 import app.domain.model.Patient;
 import app.domain.model.Staff;
-import app.domain.model.vo.Gender;
-import app.domain.model.vo.StaffRole;
+import app.domain.model.enums.Gender;
+import app.domain.model.enums.StaffRole;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 

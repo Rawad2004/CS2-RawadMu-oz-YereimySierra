@@ -1,5 +1,6 @@
 package app.domain.model;
 
+import app.domain.model.enums.Gender;
 import app.domain.model.vo.*;
 import jakarta.persistence.*;
 import java.util.ArrayList;
@@ -99,6 +100,12 @@ public class Patient {
         vitalSignsEntries.add(entry);
     }
 
+    public boolean hasActiveInsurance() {
+        return insurancePolicy != null &&
+                insurancePolicy.isActive() &&
+                !insurancePolicy.getExpiryDate().isBefore(java.time.LocalDate.now());
+    }
+
     public void removeVitalSigns(VitalSignsEntry entry) {
         vitalSignsEntries.remove(entry); // orphans se eliminarán
         entry.setPatient(null);
@@ -122,6 +129,7 @@ public class Patient {
     public Email getEmail() { return email; }
     public EmergencyContact getEmergencyContact() { return emergencyContact; }
     public InsurancePolicy getInsurancePolicy() { return insurancePolicy; }
+
 
     public List<VitalSignsEntry> getVitalSignsEntries() {
         return vitalSignsEntries;

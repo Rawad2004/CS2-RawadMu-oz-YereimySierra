@@ -1,6 +1,6 @@
 package app.application.services;
 
-import app.application.dto.CreateStaffCommand;
+import app.application.port.in.CreateStaffCommand;
 import app.application.usecases.HHRRUseCase.CreateStaffUseCase;
 import app.domain.model.Staff;
 import app.domain.model.vo.*;

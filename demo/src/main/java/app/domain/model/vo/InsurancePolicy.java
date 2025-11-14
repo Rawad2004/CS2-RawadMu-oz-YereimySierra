@@ -3,6 +3,7 @@ package app.domain.model.vo;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDate;
 
 
@@ -26,4 +27,6 @@ public class InsurancePolicy implements Serializable {
     public String getPolicyNumber() {return policyNumber;}
     public boolean isActive() {return active;}
     public LocalDate getExpiryDate() {return expiryDate;}
+
+
 }
