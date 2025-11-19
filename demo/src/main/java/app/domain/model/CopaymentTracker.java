@@ -1,4 +1,3 @@
-// File: src/main/java/app/domain/model/CopaymentTracker.java
 package app.domain.model;
 
 import app.domain.model.vo.Money;
@@ -58,36 +57,31 @@ public class CopaymentTracker {
     }
 
     protected CopaymentTracker() {
-        // Constructor para JPA
+
     }
 
-    // REGLA DE NEGOCIO PRINCIPAL: Agregar copago y verificar si alcanza el umbral
     public void addCopayment(Money copayment) {
         if (copayment == null || copayment.isZero()) {
             return;
         }
 
         if (isExempt) {
-            // Si ya es exempt, no se suma el copago
             return;
         }
 
         this.totalCopayment = this.totalCopayment.add(copayment);
         this.lastUpdated = LocalDate.now();
 
-        // Verificar si alcanza el umbral de exención
         if (this.totalCopayment.isGreaterThan(this.exemptionThreshold) ||
                 this.totalCopayment.isEqualTo(this.exemptionThreshold)) {
             this.isExempt = true;
         }
     }
 
-    // Verificar si el paciente está exento de copagos
     public boolean isPatientExempt() {
         return this.isExempt;
     }
 
-    // Reiniciar tracker para nuevo año fiscal
     public void resetForNewFiscalYear(int newFiscalYear) {
         this.fiscalYear = newFiscalYear;
         this.totalCopayment = Money.zero();
@@ -95,12 +89,10 @@ public class CopaymentTracker {
         this.lastUpdated = LocalDate.now();
     }
 
-    // Validar si puede aplicar copago
     public boolean canApplyCopayment() {
         return !isExempt;
     }
 
-    // Obtener copago restante hasta el umbral
     public Money getRemainingCopaymentUntilExemption() {
         if (isExempt) {
             return Money.zero();
@@ -110,7 +102,6 @@ public class CopaymentTracker {
         return remaining.isGreaterThan(Money.zero()) ? remaining : Money.zero();
     }
 
-    // Getters
     public Long getId() { return id; }
     public String getPatientNationalId() { return patientNationalId; }
     public String getPatientName() { return patientName; }

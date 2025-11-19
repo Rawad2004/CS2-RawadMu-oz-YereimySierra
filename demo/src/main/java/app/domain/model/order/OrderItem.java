@@ -16,7 +16,6 @@ public abstract class OrderItem {
     @Column(name = "item_number", nullable = false)
     private int itemNumber;
 
-    // Constructor protegido para JPA
     protected OrderItem() {
     }
 
@@ -27,7 +26,6 @@ public abstract class OrderItem {
         this.itemNumber = itemNumber;
     }
 
-    // Getters
     public Long getId() { return id; }
     public int getItemNumber() { return itemNumber; }
 

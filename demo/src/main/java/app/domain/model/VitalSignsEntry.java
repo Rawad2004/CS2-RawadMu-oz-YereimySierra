@@ -1,5 +1,3 @@
-// File: src/main/java/app/domain/model/VitalSignsEntry.java
-// VERSIÓN MEJORADA CON VALUE OBJECTS:
 package app.domain.model;
 
 import app.domain.model.vo.BloodPressure;
@@ -49,7 +47,6 @@ public class VitalSignsEntry {
 
     protected VitalSignsEntry() {}
 
-    // Constructor con Value Objects
     public VitalSignsEntry(BloodPressure bloodPressure, Temperature temperature,
                            Pulse pulse, OxygenLevel oxygenLevel, LocalDate recordDate) {
         this.bloodPressure = bloodPressure;
@@ -59,19 +56,16 @@ public class VitalSignsEntry {
         this.recordDate = recordDate;
     }
 
-    // Getters para los Value Objects
     public BloodPressure getBloodPressure() { return bloodPressure; }
     public Temperature getTemperature() { return temperature; }
     public Pulse getPulse() { return pulse; }
     public OxygenLevel getOxygenLevel() { return oxygenLevel; }
 
-    // Getters para los valores primitivos (compatibilidad)
     public Double getBloodPressureValue() { return bloodPressure.getValue(); }
     public Double getTemperatureValue() { return temperature.getValue(); }
     public Integer getPulseValue() { return pulse.getValue(); }
     public Double getOxygenLevelValue() { return oxygenLevel.getValue(); }
 
-    // Resto de getters
     public String getId() { return id; }
     public LocalDate getRecordDate() { return recordDate; }
     public Patient getPatient() { return patient; }

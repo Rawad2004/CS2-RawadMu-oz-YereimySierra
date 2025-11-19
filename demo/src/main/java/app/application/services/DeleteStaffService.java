@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/DeleteStaffService.java
 package app.application.services;
 
 import app.application.usecases.HHRRUseCase.DeleteStaffUseCase;
@@ -19,13 +18,10 @@ public class DeleteStaffService implements DeleteStaffUseCase {
 
     @Override
     public void deleteStaff(String nationalId) {
-        // Validar que el staff exista
         if (!staffRepository.existsByNationalId(new NationalId(nationalId))) {
             throw new IllegalArgumentException("Staff no encontrado con cédula: " + nationalId);
         }
 
-        // Aquí se pueden agregar validaciones adicionales antes de eliminar
-        // Por ejemplo: verificar que no tenga registros asociados, etc.
 
         staffRepository.deleteById(
                 staffRepository.findByNationalId(new NationalId(nationalId))

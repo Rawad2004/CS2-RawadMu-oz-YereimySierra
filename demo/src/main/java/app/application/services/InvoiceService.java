@@ -28,10 +28,8 @@ public class InvoiceService implements GenerateInvoicePort {
 
     @Override
     public Invoice generateInvoice(GenerateInvoiceCommand command) {
-        // 1. Convertir items del command a entidades de dominio
         List<InvoiceItem> invoiceItems = convertToInvoiceItems(command.items());
 
-        // 2. Crear la factura base
         Invoice invoice = new Invoice(
                 command.patientNationalId(),
                 command.patientName(),
@@ -46,10 +44,8 @@ public class InvoiceService implements GenerateInvoicePort {
                 command.fiscalYear()
         );
 
-        // 3. Aplicar reglas de exención por copagos anuales > $1M
         applyAnnualCopaymentExemption(invoice);
 
-        // 4. Guardar la factura
         return invoiceRepository.save(invoice);
     }
 
@@ -75,32 +71,28 @@ public class InvoiceService implements GenerateInvoicePort {
 
     private void applyAnnualCopaymentExemption(Invoice invoice) {
         if (!invoice.isPolicyActive()) {
-            return; // No aplica para pólizas inactivas
+            return;
         }
 
-        // Obtener o crear el tracker de copagos para el paciente en el año fiscal
         CopaymentTracker tracker = copaymentTrackerRepository.findOrCreateByPatientAndFiscalYear(
                 invoice.getPatientNationalId(),
                 invoice.getPatientName(),
                 invoice.getFiscalYear()
         );
 
-        // Si el paciente ya está exento, aplicar exención completa
         if (tracker.isPatientExempt()) {
             invoice.applyCopaymentExemption();
         } else {
-            // Si no está exento, agregar este copago al tracker
+
             tracker.addCopayment(invoice.getCopayment());
             copaymentTrackerRepository.save(tracker);
         }
     }
 
-    // Método adicional para obtener facturas por paciente
     public List<Invoice> getInvoicesByPatient(String patientNationalId) {
         return invoiceRepository.findByPatientNationalId(patientNationalId);
     }
 
-    // Método para obtener el tracker de copagos de un paciente
     public CopaymentTracker getCopaymentTracker(String patientNationalId, int fiscalYear) {
         return copaymentTrackerRepository.findByPatientAndFiscalYear(patientNationalId, fiscalYear)
                 .orElseThrow(() -> new IllegalArgumentException("Tracker no encontrado"));
@@ -120,14 +112,14 @@ public class InvoiceService implements GenerateInvoicePort {
         );
     }
 
-    // Método para obtener facturas pendientes de pago
+
     public List<Invoice> getPendingInvoices(String patientNationalId) {
         return invoiceRepository.findByPatientNationalId(patientNationalId).stream()
                 .filter(invoice -> invoice.getStatus() == app.domain.model.enums.InvoiceStatus.GENERATED)
                 .toList();
     }
 
-    // Método para marcar factura como pagada
+
     public Invoice markInvoiceAsPaid(String invoiceNumber) {
         Invoice invoice = invoiceRepository.findByInvoiceNumber(invoiceNumber)
                 .orElseThrow(() -> new IllegalArgumentException("Factura no encontrada: " + invoiceNumber));
@@ -136,7 +128,6 @@ public class InvoiceService implements GenerateInvoicePort {
         return invoiceRepository.save(invoice);
     }
 
-    // DTO para resumen de copagos
     public record CopaymentSummary(
             String patientNationalId,
             String patientName,

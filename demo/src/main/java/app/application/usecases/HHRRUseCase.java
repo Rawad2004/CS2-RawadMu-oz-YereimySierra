@@ -1,25 +1,25 @@
-package app.application.usecases;
+    package app.application.usecases;
 
-import app.application.port.in.CreateStaffCommand;
-import app.application.port.in.UpdateStaffCommand;
-import app.domain.model.Staff;
+    import app.application.port.in.CreateStaffCommand;
+    import app.application.port.in.UpdateStaffCommand;
+    import app.domain.model.Staff;
 
-import java.util.List;
+    import java.util.List;
 
-public interface HHRRUseCase {
-    interface CreateStaffUseCase{
-        Staff createStaff(CreateStaffCommand command);
-    }
-    interface UpdateStaffUseCase {
-        Staff updateStaff(UpdateStaffCommand command);
-    }
+    public interface HHRRUseCase {
+        interface CreateStaffUseCase{
+            Staff createStaff(CreateStaffCommand command);
+        }
+        interface UpdateStaffUseCase {
+            Staff updateStaff(UpdateStaffCommand command);
+        }
 
-    interface DeleteStaffUseCase {
-        void deleteStaff(String nationalId);
+        interface DeleteStaffUseCase {
+            void deleteStaff(String nationalId);
+        }
+        interface FindStaffUseCase {
+            Staff findStaffById(Long id);
+            Staff findStaffByNationalId(String nationalId);
+            List<Staff> findAllStaff();
+        }
     }
-    interface FindStaffUseCase {
-        Staff findStaffById(Long id);
-        Staff findStaffByNationalId(String nationalId);
-        List<Staff> findAllStaff();
-    }
-}

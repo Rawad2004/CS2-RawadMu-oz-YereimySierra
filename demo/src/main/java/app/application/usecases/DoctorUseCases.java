@@ -1,14 +1,12 @@
-// File: src/main/java/app/application/usecases/DoctorUseCases.java
 package app.application.usecases;
 
-import app.application.port.in.CreateClinicalHistoryEntryCommand;
-import app.application.port.in.CreateOrderCommand;
-import app.application.port.in.UpdateClinicalHistoryEntryCommand;
-import app.application.port.in.UpdateDiagnosisCommand;
+import app.application.port.in.*;
 import app.domain.model.ClinicalHistoryEntry;
 import app.domain.model.Order;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 public interface DoctorUseCases {
 
@@ -28,7 +26,11 @@ public interface DoctorUseCases {
         Order createOrder(CreateOrderCommand command);
     }
 
-    // NUEVOS USE CASES ESPECÍFICOS
+    interface FindClinicalHistoryUseCase {
+        Optional<ClinicalHistoryEntry> findByPatientNationalId(String patientNationalId);
+    }
+
+
     interface UpdateDiagnosisOnlyUseCase {
         ClinicalHistoryEntry updateDiagnosisOnly(String patientNationalId, LocalDate visitDate, String newDiagnosis);
     }
@@ -44,5 +46,48 @@ public interface DoctorUseCases {
 
     interface CompleteVisitUseCase {
         ClinicalHistoryEntry completeVisit(String patientNationalId, LocalDate visitDate, String completionNotes);
+    }
+
+    interface DeleteVisitUseCase {
+        void deleteVisit(String patientNationalId, LocalDate visitDate);
+    }
+
+
+    interface RegisterVisitUseCase {
+        void registerVisit(String patientNationalId,
+                           LocalDate visitDate,
+                           RegisterVisitCommand command);
+    }
+
+    interface GetPatientOrdersUseCase {
+        List<Order> getOrders(String patientNationalId);
+    }
+
+    interface GetPatientVisitsUseCase {
+        List<VisitSummaryResponse> getVisits(String patientNationalId);
+    }
+
+    interface GetOrderDetailUseCase {
+        Order getOrderByNumber(String orderNumber);
+    }
+
+    interface GetVisitDetailUseCase {
+        VisitDetailResponse getVisitDetail(String patientNationalId,
+                                           LocalDate visitDate);
+    }
+
+    interface UpdateVisitDiagnosisUseCase {
+        void updateDiagnosis(UpdateDiagnosisCommand command);
+    }
+
+    interface AssociateOrderToVisitUseCase {
+        void associateOrder(String patientNationalId,
+                            LocalDate visitDate,
+                            AssociateOrderToVisitCommand command);
+    }
+
+    interface MarkVisitPendingDiagnosticUseCase {
+        void markPendingDiagnostic(String patientNationalId,
+                                   LocalDate visitDate);
     }
 }

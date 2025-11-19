@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/OrderInvoiceTriggerService.java
 package app.application.services;
 
 import app.domain.model.Invoice;
@@ -29,42 +28,33 @@ public class OrderInvoiceTriggerService {
         this.orderRepository = orderRepository;
     }
 
-    /**
-     * Método que se llamará después de crear una orden para generar factura automáticamente
-     */
     public void generateInvoiceAfterOrderCreation(String orderNumber) {
         try {
-            // Esperar un momento para asegurar que la orden esté persistida
+
             Thread.sleep(100);
 
-            // Generar factura automáticamente
+
             orderToInvoiceService.convertOrderToInvoice(orderNumber);
 
             System.out.println("✅ Factura generada automáticamente para la orden: " + orderNumber);
 
         } catch (Exception e) {
             System.err.println("❌ Error generando factura automática para orden " + orderNumber + ": " + e.getMessage());
-            // No lanzamos la excepción para no interrumpir el flujo principal
         }
     }
 
-    /**
-     * Método para ser llamado desde el CreateOrderService después de guardar la orden
-     */
+
     public void onOrderCreated(Order order) {
-        // Ejecutar en un hilo separado para no bloquear la respuesta
+
         new Thread(() -> {
             try {
-                // ✅ 1. Sincronizar con historia clínica
+
                 clinicalHistorySyncService.syncOrderWithClinicalHistory(order);
 
-                // ✅ 2. Generar factura
                 Invoice invoice = orderToInvoiceService.convertOrderToInvoice(order.getOrderNumber());
 
-                // ✅ 3. Actualizar control de copagos
                 copaymentTriggerService.updateCopaymentTracker(invoice);
 
-                // ✅ 4. Verificar exención automática
                 copaymentTriggerService.applyAutomaticCopaymentExemption(
                         invoice.getPatientNationalId(),
                         invoice.getFiscalYear()

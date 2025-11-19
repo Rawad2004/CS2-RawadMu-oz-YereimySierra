@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/port/in/UpdateClinicalHistoryEntryCommand.java
 package app.application.port.in;
 
 import jakarta.validation.constraints.NotBlank;
@@ -21,7 +20,7 @@ public record UpdateClinicalHistoryEntryCommand(
         @NotNull(message = "La fecha de actualización es obligatoria")
         LocalDate updateDate
 ) {
-    // Constructor alternativo sin updateNotes
+
     public UpdateClinicalHistoryEntryCommand(String patientNationalId, LocalDate originalVisitDate,
                                              String newDiagnosis, LocalDate updateDate) {
         this(patientNationalId, originalVisitDate, newDiagnosis, null, updateDate);

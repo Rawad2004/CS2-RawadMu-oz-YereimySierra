@@ -1,4 +1,3 @@
-// File: src/main/java/app/domain/model/vo/BloodPressure.java
 package app.domain.model.vo;
 
 import jakarta.persistence.*;

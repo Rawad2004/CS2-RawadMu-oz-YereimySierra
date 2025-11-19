@@ -21,7 +21,6 @@ public class ProcedureOrderItem extends OrderItem {
     @Column(name = "specialist_id")
     private Long specialistId;
 
-    // Constructor protegido para JPA
     protected ProcedureOrderItem() {
         super();
     }
@@ -44,7 +43,6 @@ public class ProcedureOrderItem extends OrderItem {
         return "PROCEDURE";
     }
 
-    // Getters
     public Long getProcedureId() { return procedureId; }
     public int getQuantity() { return quantity; }
     public String getFrequency() { return frequency; }

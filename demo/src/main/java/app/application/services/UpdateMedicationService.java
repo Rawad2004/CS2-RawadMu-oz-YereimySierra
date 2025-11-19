@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/UpdateMedicationService.java
 package app.application.services;
 
 import app.application.port.in.UpdateMedicationCommand;
@@ -25,11 +24,11 @@ public class UpdateMedicationService implements UpdateMedicationUseCase {
             throw new IllegalArgumentException("ID de medicamento inválido");
         }
 
-        // Buscar el medicamento existente
+
         Medication existingMedication = medicationRepository.findById(command.medicationId())
                 .orElseThrow(() -> new IllegalArgumentException("Medicamento no encontrado con ID: " + command.medicationId()));
 
-        // ✅ Validación: Verificar unicidad del nombre (si se está cambiando)
+
         if (command.name() != null && !command.name().equals(existingMedication.getName())) {
             medicationRepository.findByName(command.name())
                     .ifPresent(medication -> {
@@ -37,18 +36,17 @@ public class UpdateMedicationService implements UpdateMedicationUseCase {
                     });
         }
 
-        // Actualizar campos si se proporcionan
+
         if (command.name() != null) {
-            // En una implementación real, usaríamos un método setter en la entidad
-            // existingMedication.updateName(command.name());
+
         }
 
         if (command.cost() != null) {
             Money newCost = new Money(command.cost());
-            // existingMedication.updateCost(newCost);
+
         }
 
-        // Por ahora retornamos el existente (en una implementación real actualizaríamos)
+
         System.out.println("✅ Medicamento actualizado - ID: " + command.medicationId() +
                 ", Nombre: " + command.name() +
                 ", Costo: " + command.cost());

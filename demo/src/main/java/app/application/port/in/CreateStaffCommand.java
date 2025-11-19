@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
-// Dejamos solo las anotaciones. El constructor manual se elimina.
+
 public record CreateStaffCommand(
         @NotBlank(message = "La cédula es obligatoria")
         String nationalId,
@@ -24,7 +24,7 @@ public record CreateStaffCommand(
 
         @NotNull(message = "La fecha de nacimiento es obligatoria")
         @Past(message = "La fecha de nacimiento debe ser en el pasado")
-        @JsonFormat(pattern = "dd/MM/yyyy") // Agregar esto
+        @JsonFormat(pattern = "dd/MM/yyyy")
         LocalDate birthDate,
 
         @NotBlank(message = "La dirección es obligatoria")

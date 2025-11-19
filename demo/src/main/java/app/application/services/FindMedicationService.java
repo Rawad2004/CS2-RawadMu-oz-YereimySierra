@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/FindMedicationService.java
 package app.application.services;
 
 import app.application.usecases.SupportUseCases.FindMedicationUseCase;
@@ -20,17 +19,11 @@ public class FindMedicationService implements FindMedicationUseCase {
 
     @Override
     public Optional<Medication> findById(Long id) {
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("ID de medicamento inválido");
-        }
         return medicationRepository.findById(id);
     }
 
     @Override
     public Optional<Medication> findByName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nombre de medicamento no puede estar vacío");
-        }
         return medicationRepository.findByName(name);
     }
 
@@ -41,8 +34,7 @@ public class FindMedicationService implements FindMedicationUseCase {
 
     @Override
     public List<Medication> findAllActive() {
-        // Por ahora todos los medicamentos se consideran activos
-        // En una implementación futura podríamos agregar campo "active"
+        // Si no tienes un campo "active", por ahora devolvemos todos
         return medicationRepository.findAll();
     }
 }

@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/CopaymentControlTriggerService.java
 package app.application.services;
 
 import app.domain.model.CopaymentTracker;
@@ -17,23 +16,21 @@ public class CopaymentControlTriggerService {
         this.copaymentTrackerRepository = copaymentTrackerRepository;
     }
 
-    /**
-     * TRIGGER: Actualizar tracker de copagos cuando se genera una factura
-     */
+
     public void updateCopaymentTracker(Invoice invoice) {
         try {
             String patientNationalId = invoice.getPatientNationalId();
             int fiscalYear = invoice.getFiscalYear();
 
-            // Obtener o crear el tracker para el paciente en el año fiscal
+
             CopaymentTracker tracker = copaymentTrackerRepository
                     .findOrCreateByPatientAndFiscalYear(
                             patientNationalId,
-                            getPatientName(invoice), // Necesitaríamos este método
+                            getPatientName(invoice),
                             fiscalYear
                     );
 
-            // Solo sumar copago si la póliza está activa y no está exento
+
             if (invoice.isPolicyActive() && !tracker.isExempt()) {
                 tracker.addCopayment(invoice.getCopayment());
                 copaymentTrackerRepository.save(tracker);
@@ -43,7 +40,7 @@ public class CopaymentControlTriggerService {
                         ", Total anual: " + tracker.getTotalCopayment().getAmount());
             }
 
-            // Verificar si alcanzó el umbral de exención
+
             if (tracker.isPatientExempt()) {
                 System.out.println("🎉 Paciente exento de copagos - Límite anual alcanzado: " +
                         patientNationalId);
@@ -54,9 +51,7 @@ public class CopaymentControlTriggerService {
         }
     }
 
-    /**
-     * TRIGGER: Aplicar exención automática si se supera el límite
-     */
+
     public void applyAutomaticCopaymentExemption(String patientNationalId, int fiscalYear) {
         try {
             CopaymentTracker tracker = copaymentTrackerRepository
@@ -65,7 +60,7 @@ public class CopaymentControlTriggerService {
 
             if (tracker.isPatientExempt()) {
                 System.out.println("🔓 Exención automática aplicada - Paciente: " + patientNationalId);
-                // Aquí se podrían notificar a los sistemas relevantes
+
             }
         } catch (Exception e) {
             System.err.println("❌ Error aplicando exención automática: " + e.getMessage());
@@ -73,7 +68,7 @@ public class CopaymentControlTriggerService {
     }
 
     private String getPatientName(Invoice invoice) {
-        // Placeholder - en implementación real obtendríamos el nombre del paciente
+
         return "Paciente " + invoice.getPatientNationalId();
     }
 }

@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/port/in/CreateClinicalHistoryEntryCommand.java
 package app.application.port.in;
 
 import app.domain.model.ClinicalHistoryEntry;
@@ -23,19 +22,19 @@ public record CreateClinicalHistoryEntryCommand(
         @NotBlank(message = "La sintomatología es obligatoria")
         String symptomatology,
 
-        String diagnosis, // Puede ser null inicialmente
+        String diagnosis,
 
-        // Hacer más explícito que la orden es opcional
+
         String associatedOrderNumber,
 
-        // Tipo de visita (opcional, se infiere si no se proporciona)
+
         ClinicalHistoryEntry.OrderType visitType
 ) {
-    // Constructor alternativo para visitas sin orden
+
     public CreateClinicalHistoryEntryCommand {
         if (visitType == null) {
             visitType = (associatedOrderNumber != null && !associatedOrderNumber.trim().isEmpty())
-                    ? ClinicalHistoryEntry.OrderType.DIAGNOSTIC_AID // Valor por defecto si hay orden
+                    ? ClinicalHistoryEntry.OrderType.DIAGNOSTIC_AID
                     : ClinicalHistoryEntry.OrderType.NONE;
         }
     }

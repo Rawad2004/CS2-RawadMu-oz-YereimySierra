@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/DeleteDiagnosticAidService.java
 package app.application.services;
 
 import app.application.usecases.SupportUseCases.DeleteDiagnosticAidUseCase;
@@ -22,11 +21,11 @@ public class DeleteDiagnosticAidService implements DeleteDiagnosticAidUseCase {
             throw new IllegalArgumentException("ID de ayuda diagnóstica inválido");
         }
 
-        // Verificar que existe
+
         diagnosticAidRepository.findById(diagnosticAidId)
                 .orElseThrow(() -> new IllegalArgumentException("Ayuda diagnóstica no encontrada con ID: " + diagnosticAidId));
 
-        // ✅ Validación: Verificar que no está siendo usado
+
         if (isDiagnosticAidUsedInActiveOrders(diagnosticAidId)) {
             throw new IllegalStateException(
                     "No se puede eliminar la ayuda diagnóstica porque está siendo usado en órdenes médicas activas."
@@ -47,7 +46,7 @@ public class DeleteDiagnosticAidService implements DeleteDiagnosticAidUseCase {
     }
 
     private boolean isDiagnosticAidUsedInActiveOrders(Long diagnosticAidId) {
-        // Por ahora permitimos la eliminación
+
         return false;
     }
 }

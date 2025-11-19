@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/DeleteProcedureService.java
 package app.application.services;
 
 import app.application.usecases.SupportUseCases.DeleteProcedureUseCase;
@@ -22,11 +21,11 @@ public class DeleteProcedureService implements DeleteProcedureUseCase {
             throw new IllegalArgumentException("ID de procedimiento inválido");
         }
 
-        // Verificar que el procedimiento existe
+
         procedureRepository.findById(procedureId)
                 .orElseThrow(() -> new IllegalArgumentException("Procedimiento no encontrado con ID: " + procedureId));
 
-        // ✅ Validación: Verificar que no está siendo usado (similar a medicamentos)
+
         if (isProcedureUsedInActiveOrders(procedureId)) {
             throw new IllegalStateException(
                     "No se puede eliminar el procedimiento porque está siendo usado en órdenes médicas activas."
@@ -47,8 +46,6 @@ public class DeleteProcedureService implements DeleteProcedureUseCase {
     }
 
     private boolean isProcedureUsedInActiveOrders(Long procedureId) {
-        // Por ahora permitimos la eliminación
-        // En producción, implementar verificación real
         return false;
     }
 }

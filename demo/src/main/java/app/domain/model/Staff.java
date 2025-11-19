@@ -59,6 +59,13 @@
         private Password password;
 
 
+        public void changeRole(StaffRole newRole) {
+            if (newRole == null) {
+                throw new IllegalArgumentException("El rol no puede ser nulo");
+            }
+            this.role = newRole;
+        }
+
         public Staff(String fullName, NationalId nationalId,
                      Email email, PhoneNumber phoneNumber, DateOfBirth dateOfBirth,
                      Address address, StaffRole role, Username username, Password password) {
@@ -76,7 +83,7 @@
         protected Staff(){}
 
         public boolean isActive() {
-            return true; // Por ahora siempre activo, pero puedes agregar lógica
+            return true;
         }
 
         public void updateContactInfo(Address newAddress, PhoneNumber newPhoneNumber, Email newEmail) {

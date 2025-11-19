@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/FindDiagnosticAidService.java
 package app.application.services;
 
 import app.application.usecases.SupportUseCases.FindDiagnosticAidUseCase;

@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/usecases/SupportUseCases.java
 package app.application.usecases;
 
 import app.application.port.in.*;
@@ -9,23 +8,19 @@ import java.util.Optional;
 
 public interface SupportUseCases {
 
-    // Interface para crear medicamentos
+
     interface CreateMedicationUseCase {
         Medication createMedication(CreateMedicationCommand command);
     }
 
-
-    // Interface para crear procedimientos
     interface CreateProcedureUseCase {
         Procedure createProcedure(CreateProcedureCommand command);
     }
 
-    // Interface para crear ayudas diagnósticas
     interface CreateDiagnosticAidUseCase {
         DiagnosticAid createDiagnosticAid(CreateDiagnosticAidCommand command);
     }
 
-    // Interface para crear especialistas
     interface CreateSpecialistUseCase {
         Specialist createSpecialist(CreateSpecialistCommand command);
     }
@@ -49,6 +44,13 @@ public interface SupportUseCases {
         List<DiagnosticAid> findAll();
     }
 
+    interface FindSpecialistUseCase {
+        Optional<Specialist> findById(Long id);
+        Optional<Specialist> findBySpecialtyName(String specialtyName);
+        List<Specialist> findAll();
+    }
+
+    // ===== UPDATE =====
     interface UpdateMedicationUseCase {
         Medication updateMedication(UpdateMedicationCommand command);
     }
@@ -61,6 +63,11 @@ public interface SupportUseCases {
         DiagnosticAid updateDiagnosticAid(UpdateDiagnosticAidCommand command);
     }
 
+    interface UpdateSpecialistUseCase {
+        Specialist updateSpecialist(UpdateSpecialistCommand command);
+    }
+
+    // ===== DELETE =====
     interface DeleteMedicationUseCase {
         void deleteMedication(Long medicationId);
         void deleteMedicationByName(String name);
@@ -74,5 +81,10 @@ public interface SupportUseCases {
     interface DeleteDiagnosticAidUseCase {
         void deleteDiagnosticAid(Long diagnosticAidId);
         void deleteDiagnosticAidByName(String name);
+    }
+
+    interface DeleteSpecialistUseCase {
+        void deleteSpecialist(Long specialistId);
+        void deleteSpecialistBySpecialtyName(String name);
     }
 }

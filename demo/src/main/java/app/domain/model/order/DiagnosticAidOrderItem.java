@@ -18,7 +18,6 @@ public class DiagnosticAidOrderItem extends OrderItem {
     @Column(name = "specialist_id")
     private Long specialistId;
 
-    // Constructor protegido para JPA
     protected DiagnosticAidOrderItem() {
         super();
     }
@@ -40,7 +39,6 @@ public class DiagnosticAidOrderItem extends OrderItem {
         return "DIAGNOSTIC_AID";
     }
 
-    // Getters
     public Long getDiagnosticAidId() { return diagnosticAidId; }
     public int getQuantity() { return quantity; }
     public boolean isRequiresSpecialist() { return requiresSpecialist; }

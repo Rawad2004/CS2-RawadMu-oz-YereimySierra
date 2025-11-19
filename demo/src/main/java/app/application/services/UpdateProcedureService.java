@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/UpdateProcedureService.java
 package app.application.services;
 
 import app.application.port.in.UpdateProcedureCommand;
@@ -28,7 +27,7 @@ public class UpdateProcedureService implements UpdateProcedureUseCase {
         Procedure existingProcedure = procedureRepository.findById(command.procedureId())
                 .orElseThrow(() -> new IllegalArgumentException("Procedimiento no encontrado con ID: " + command.procedureId()));
 
-        // ✅ Validación de unicidad del nombre
+
         if (command.name() != null && !command.name().equals(existingProcedure.getName())) {
             procedureRepository.findByName(command.name())
                     .ifPresent(procedure -> {
@@ -36,14 +35,13 @@ public class UpdateProcedureService implements UpdateProcedureUseCase {
                     });
         }
 
-        // Actualizar campos
+
         if (command.name() != null) {
-            // existingProcedure.updateName(command.name());
+
         }
 
         if (command.cost() != null) {
             Money newCost = new Money(command.cost());
-            // existingProcedure.updateCost(newCost);
         }
 
         System.out.println("✅ Procedimiento actualizado - ID: " + command.procedureId() +

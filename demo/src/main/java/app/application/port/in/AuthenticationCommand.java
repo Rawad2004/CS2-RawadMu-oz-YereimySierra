@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/port/in/AuthenticationCommand.java
 package app.application.port.in;
 
 import jakarta.validation.constraints.NotBlank;
@@ -12,10 +11,11 @@ public record AuthenticationCommand(
         @NotBlank(message = "La contraseña es obligatoria")
         String password
 ) {
-    // Métodos de conveniencia
+
     public String getUsername() {
         return username;
     }
+
     public String getPassword() {
         return password;
     }

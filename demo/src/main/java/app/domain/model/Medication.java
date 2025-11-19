@@ -26,12 +26,11 @@ public class Medication {
         this.cost = cost;
     }
 
-    // Getters
+
     public Long getId() {return id;}
     public String getName() {return name;}
     public Money getCost() {return cost;}
 
-    // Setter solo para el ID
     public void setId(Long id) {
         this.id = id;
     }

@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/CreateClinicalHistoryEntryService.java
 package app.application.services;
 
 import app.application.port.in.CreateClinicalHistoryEntryCommand;
@@ -29,27 +28,27 @@ public class CreateClinicalHistoryEntryService implements CreateClinicalHistoryE
 
     @Override
     public ClinicalHistoryEntry createClinicalHistoryEntry(CreateClinicalHistoryEntryCommand command) {
-        // Validar que el paciente existe
+
         NationalId patientId = new NationalId(command.patientNationalId());
         if (patientRepository.findByNationalId(patientId).isEmpty()) {
             throw new ResourceNotFoundException("Paciente no encontrado con cédula: " + command.patientNationalId());
         }
 
-        // Validar que el doctor existe y es médico
+
         NationalId doctorId = new NationalId(command.doctorNationalId());
         staffRepository.findByNationalId(doctorId)
                 .filter(staff -> staff.getRole() == StaffRole.DOCTOR)
                 .orElseThrow(() -> new ResourceNotFoundException("Médico no encontrado con cédula: " + command.doctorNationalId()));
 
-        // Validar que no existe visita para la misma fecha
+
         if (clinicalHistoryRepository.existsVisit(command.patientNationalId(), command.visitDate())) {
             throw new IllegalStateException("Ya existe una visita para este paciente en la fecha: " + command.visitDate());
         }
 
-        // Determinar el tipo de orden
+
         ClinicalHistoryEntry.OrderType orderType = determineOrderType(command);
 
-        // Crear la nueva visita en la historia clínica
+
         return clinicalHistoryRepository.addVisit(
                 command.patientNationalId(),
                 command.visitDate(),

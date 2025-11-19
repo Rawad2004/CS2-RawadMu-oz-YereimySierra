@@ -3,6 +3,8 @@ package app.domain.model;
 import app.domain.model.enums.Gender;
 import app.domain.model.vo.*;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +67,7 @@ public class Patient {
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VitalSignsEntry> vitalSignsEntries = new ArrayList<>();
 
-    protected Patient() { /* JPA */ }
+    protected Patient() {  }
 
     public Patient(NationalId nationalId, String fullName,
                    DateOfBirth dateOfBirth, Gender gender,
@@ -83,53 +85,79 @@ public class Patient {
         this.insurancePolicy = insurancePolicy;
     }
 
-    // --- Actualizaciones de datos
+    public void updateBasicInfo(String fullName, LocalDate birthDate, Gender gender) {
+        if (fullName != null && !fullName.isBlank()) {
+            this.fullName = fullName;
+        }
+        if (birthDate != null) {
+            this.dateOfBirth = new DateOfBirth(birthDate);
+        }
+        if (gender != null) {
+            this.gender = gender;
+        }
+    }
+
     public void updateContactInfo(Address newAddress, PhoneNumber newPhoneNumber, Email newEmail) {
-        this.address = newAddress;
-        this.phoneNumber = newPhoneNumber;
+        if (newAddress != null) {
+            this.address = newAddress;
+        }
+        if (newPhoneNumber != null) {
+            this.phoneNumber = newPhoneNumber;
+        }
         this.email = newEmail;
     }
 
-    public void updateInsurancePolicy(InsurancePolicy newPolicy) {
-        this.insurancePolicy = newPolicy;
+    public void updateEmergencyContact(EmergencyContact newEmergencyContact) {
+        if (newEmergencyContact != null) {
+            this.emergencyContact = newEmergencyContact;
+        }
     }
 
-    // --- Agregado: composición de signos vitales
+    public void updateInsurancePolicy(InsurancePolicy newPolicy) {
+        if (newPolicy != null) {
+            this.insurancePolicy = newPolicy;
+        }
+    }
+
     public void addVitalSigns(VitalSignsEntry entry) {
-        entry.setPatient(this);        // IMPORTANTÍSIMO para el lado dueño
+        entry.setPatient(this);
         vitalSignsEntries.add(entry);
+    }
+
+    public void removeVitalSigns(VitalSignsEntry entry) {
+        vitalSignsEntries.remove(entry);
+        entry.setPatient(null);
     }
 
     public boolean hasActiveInsurance() {
         return insurancePolicy != null &&
                 insurancePolicy.isActive() &&
-                !insurancePolicy.getExpiryDate().isBefore(java.time.LocalDate.now());
+                !insurancePolicy.getExpiryDate().isBefore(LocalDate.now());
     }
 
-    public void removeVitalSigns(VitalSignsEntry entry) {
-        vitalSignsEntries.remove(entry); // orphans se eliminarán
-        entry.setPatient(null);
-    }
-
-    // --- Getters
     public Long getId() { return id; }
+
     public void setId(Long id) { this.id = id; }
 
     public NationalId getNationalId() { return nationalId; }
+
     public String getFullName() { return fullName; }
 
-    // Alias claro para el VO
     public DateOfBirth getDateOfBirth() { return dateOfBirth; }
-    // (si quieres conservar compatibilidad con código viejo)
+
     public DateOfBirth getBirthDate() { return dateOfBirth; }
 
     public Gender getGender() { return gender; }
-    public Address getAddress() { return address; }
-    public PhoneNumber getPhoneNumber() { return phoneNumber; }
-    public Email getEmail() { return email; }
-    public EmergencyContact getEmergencyContact() { return emergencyContact; }
-    public InsurancePolicy getInsurancePolicy() { return insurancePolicy; }
 
+    public Address getAddress() { return address; }
+
+    public PhoneNumber getPhoneNumber() { return phoneNumber; }
+
+    public Email getEmail() { return email; }
+
+    public EmergencyContact getEmergencyContact() { return emergencyContact; }
+
+    public InsurancePolicy getInsurancePolicy() { return insurancePolicy; }
 
     public List<VitalSignsEntry> getVitalSignsEntries() {
         return vitalSignsEntries;

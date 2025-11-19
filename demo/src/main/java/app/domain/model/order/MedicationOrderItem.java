@@ -16,7 +16,6 @@ public class MedicationOrderItem extends OrderItem {
     @Column(name = "treatment_duration", nullable = false)
     private String treatmentDuration;
 
-    // Constructor protegido para JPA
     protected MedicationOrderItem() {
         super();
     }
@@ -33,7 +32,6 @@ public class MedicationOrderItem extends OrderItem {
         return "MEDICATION";
     }
 
-    // Getters
     public Long getMedicationId() { return medicationId; }
     public String getDose() { return dose; }
     public String getTreatmentDuration() { return treatmentDuration; }

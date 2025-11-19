@@ -40,30 +40,24 @@ public class OrderToInvoiceService {
         this.diagnosticAidRepository = diagnosticAidRepository;
     }
 
-    /**
-     * Convierte una orden médica en una factura aplicando todas las reglas de negocio
-     */
+
     public Invoice convertOrderToInvoice(String orderNumber) {
-        // 1. Buscar la orden con verificación
         Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + orderNumber));
 
-        // 2. Buscar el paciente con verificación
         Patient patient = patientRepository.findByNationalId(order.getPatientId())
                 .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado"));
 
-        // 3. Convertir items de la orden a items de factura
         List<app.application.port.in.GenerateInvoiceCommand.InvoiceItemCommand> invoiceItems =
                 convertOrderItemsToInvoiceItems(order.getItems());
 
-        // 4. Obtener información del seguro del paciente CON VERIFICACIONES SEGURAS
         String insuranceCompany = "";
         String policyNumber = "";
         Money policyDailyCoverage = Money.zero();
         LocalDate policyExpiryDate = LocalDate.now();
         boolean isPolicyActive = false;
 
-        // VERIFICAR que insurancePolicy no sea null antes de acceder a sus métodos
+
         if (patient.getInsurancePolicy() != null) {
             InsurancePolicy insurancePolicy = patient.getInsurancePolicy();
             insuranceCompany = insurancePolicy.getCompanyName() != null ?
@@ -71,10 +65,9 @@ public class OrderToInvoiceService {
             policyNumber = insurancePolicy.getPolicyNumber() != null ?
                     insurancePolicy.getPolicyNumber() : "";
 
-            // policyDailyCoverage no existe en InsurancePolicy, usar cero
+
             policyDailyCoverage = Money.zero();
 
-            // VERIFICAR que expiryDate no sea null
             policyExpiryDate = insurancePolicy.getExpiryDate() != null ?
                     insurancePolicy.getExpiryDate() : LocalDate.now();
 
@@ -82,19 +75,17 @@ public class OrderToInvoiceService {
                     !policyExpiryDate.isBefore(LocalDate.now());
         }
 
-        // 5. Calcular edad del paciente CON VERIFICACIÓN
         int patientAge = 0;
         if (patient.getBirthDate() != null && patient.getBirthDate().getValue() != null) {
             patientAge = calculateAge(patient.getBirthDate().getValue());
         }
 
-        // 6. Obtener nombre del médico CON VERIFICACIÓN
         String doctorName = "Médico no especificado";
         if (order.getDoctorId() != null && order.getDoctorId().getValue() != null) {
             doctorName = "Dr. " + order.getDoctorId().getValue();
         }
 
-        // 7. Crear y ejecutar el comando de facturación
+
         app.application.port.in.GenerateInvoiceCommand command =
                 new app.application.port.in.GenerateInvoiceCommand(
                         patient.getNationalId() != null ? patient.getNationalId().getValue() : "",
@@ -113,9 +104,7 @@ public class OrderToInvoiceService {
         return invoiceService.generateInvoice(command);
     }
 
-    /**
-     * Convierte los OrderItems a InvoiceItems con verificaciones de seguridad
-     */
+
     private List<app.application.port.in.GenerateInvoiceCommand.InvoiceItemCommand>
     convertOrderItemsToInvoiceItems(List<OrderItem> orderItems) {
 
@@ -135,7 +124,7 @@ public class OrderToInvoiceService {
                     invoiceItems.add(convertDiagnosticAidOrderItem((DiagnosticAidOrderItem) orderItem));
                 }
             } catch (Exception e) {
-                // Log the error but continue with other items
+
                 System.err.println("Error convirtiendo ítem de orden: " + e.getMessage());
             }
         }
@@ -146,7 +135,7 @@ public class OrderToInvoiceService {
     private app.application.port.in.GenerateInvoiceCommand.InvoiceItemCommand
     convertMedicationOrderItem(MedicationOrderItem medicationItem) {
 
-        // VERIFICAR que medicationItem y su ID no sean null
+
         if (medicationItem == null || medicationItem.getMedicationId() == null) {
             throw new IllegalArgumentException("MedicationOrderItem o su ID son nulos");
         }
@@ -154,7 +143,6 @@ public class OrderToInvoiceService {
         Medication medication = medicationRepository.findById(medicationItem.getMedicationId())
                 .orElseThrow(() -> new IllegalArgumentException("Medicamento no encontrado: " + medicationItem.getMedicationId()));
 
-        // VERIFICAR que medication y sus propiedades no sean null
         String medicationName = medication.getName() != null ? medication.getName() : "Medicamento sin nombre";
         String dose = medicationItem.getDose() != null ? medicationItem.getDose() : "Dosis no especificada";
         String treatmentDuration = medicationItem.getTreatmentDuration() != null ?
@@ -165,7 +153,7 @@ public class OrderToInvoiceService {
         return new app.application.port.in.GenerateInvoiceCommand.InvoiceItemCommand(
                 medicationName + " - " + dose,
                 "MEDICATION",
-                1, // Cantidad fija para medicamentos
+                1,
                 cost,
                 "Dosis: " + dose + ", Duración: " + treatmentDuration
         );
@@ -174,7 +162,7 @@ public class OrderToInvoiceService {
     private app.application.port.in.GenerateInvoiceCommand.InvoiceItemCommand
     convertProcedureOrderItem(ProcedureOrderItem procedureItem) {
 
-        // VERIFICAR que procedureItem y su ID no sean null
+
         if (procedureItem == null || procedureItem.getProcedureId() == null) {
             throw new IllegalArgumentException("ProcedureOrderItem o su ID son nulos");
         }
@@ -182,7 +170,6 @@ public class OrderToInvoiceService {
         Procedure procedure = procedureRepository.findById(procedureItem.getProcedureId())
                 .orElseThrow(() -> new IllegalArgumentException("Procedimiento no encontrado: " + procedureItem.getProcedureId()));
 
-        // VERIFICAR que procedure y sus propiedades no sean null
         String procedureName = procedure.getName() != null ? procedure.getName() : "Procedimiento sin nombre";
         String frequency = procedureItem.getFrequency() != null ? procedureItem.getFrequency() : "Frecuencia no especificada";
         Money cost = procedure.getCost() != null ? procedure.getCost() : Money.zero();
@@ -204,7 +191,6 @@ public class OrderToInvoiceService {
     private app.application.port.in.GenerateInvoiceCommand.InvoiceItemCommand
     convertDiagnosticAidOrderItem(DiagnosticAidOrderItem diagnosticItem) {
 
-        // VERIFICAR que diagnosticItem y su ID no sean null
         if (diagnosticItem == null || diagnosticItem.getDiagnosticAidId() == null) {
             throw new IllegalArgumentException("DiagnosticAidOrderItem o su ID son nulos");
         }
@@ -212,7 +198,6 @@ public class OrderToInvoiceService {
         DiagnosticAid diagnosticAid = diagnosticAidRepository.findById(diagnosticItem.getDiagnosticAidId())
                 .orElseThrow(() -> new IllegalArgumentException("Ayuda diagnóstica no encontrada: " + diagnosticItem.getDiagnosticAidId()));
 
-        // VERIFICAR que diagnosticAid y sus propiedades no sean null
         String diagnosticName = diagnosticAid.getName() != null ? diagnosticAid.getName() : "Ayuda diagnóstica sin nombre";
         Money cost = diagnosticAid.getCost() != null ? diagnosticAid.getCost() : Money.zero();
 
@@ -230,9 +215,7 @@ public class OrderToInvoiceService {
         );
     }
 
-    /**
-     * Calcula la edad del paciente con verificación de null safety
-     */
+
     private int calculateAge(LocalDate birthDate) {
         if (birthDate == null) {
             return 0;
@@ -240,9 +223,7 @@ public class OrderToInvoiceService {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
-    /**
-     * Genera facturas para todas las órdenes de un paciente con manejo de errores
-     */
+
     public List<Invoice> generateInvoicesForPatient(String patientNationalId, int fiscalYear) {
         if (patientNationalId == null || patientNationalId.trim().isEmpty()) {
             throw new IllegalArgumentException("La cédula del paciente no puede ser nula o vacía");
@@ -257,7 +238,6 @@ public class OrderToInvoiceService {
                 Invoice invoice = convertOrderToInvoice(order.getOrderNumber());
                 invoices.add(invoice);
             } catch (Exception e) {
-                // Log the error but continue with other orders
                 System.err.println("Error generando factura para orden " +
                         (order.getOrderNumber() != null ? order.getOrderNumber() : "N/A") +
                         ": " + e.getMessage());

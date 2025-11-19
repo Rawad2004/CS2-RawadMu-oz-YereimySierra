@@ -20,9 +20,9 @@ public record GenerateInvoiceCommand(
 ) {
     public record InvoiceItemCommand(
             String description,
-            String type, // "MEDICATION", "PROCEDURE", "DIAGNOSTIC_AID"
+            String type,
             int quantity,
             Money unitPrice,
-            String details // dosificación, frecuencia, etc.
+            String details
     ) {}
 }

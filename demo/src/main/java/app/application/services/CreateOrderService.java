@@ -1,19 +1,23 @@
 package app.application.services;
 
+import app.application.events.OrderCreatedEvent;
 import app.application.port.in.CreateOrderCommand;
 import app.application.usecases.DoctorUseCases.CreateOrderUseCase;
-import app.domain.model.enums.OrderItemType;
+import app.domain.exception.ResourceNotFoundException;
 import app.domain.model.Order;
 import app.domain.model.Patient;
 import app.domain.model.Staff;
-import app.domain.model.order.*;
-import app.domain.model.vo.NationalId;
+import app.domain.model.enums.OrderItemType;
 import app.domain.model.enums.StaffRole;
+import app.domain.model.order.DiagnosticAidOrderItem;
+import app.domain.model.order.MedicationOrderItem;
+import app.domain.model.order.OrderItem;
+import app.domain.model.order.ProcedureOrderItem;
+import app.domain.model.vo.NationalId;
 import app.domain.repository.*;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import app.domain.exception.ResourceNotFoundException;
-
 
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +26,6 @@ import java.util.Optional;
 @Transactional
 public class CreateOrderService implements CreateOrderUseCase {
 
-
     private final OrderRepositoryPort orderRepository;
     private final PatientRepositoryPort patientRepository;
     private final StaffRepositoryPort staffRepository;
@@ -30,13 +33,16 @@ public class CreateOrderService implements CreateOrderUseCase {
     private final ProcedureRepositoryPort procedureRepository;
     private final DiagnosticAidRepositoryPort diagnosticAidRepository;
     private final SpecialistRepositoryPort specialistRepository;
-    private final OrderInvoiceTriggerService orderInvoiceTriggerService; // ✅ NUEVA DEPENDENCIA
+    private final ApplicationEventPublisher eventPublisher;
 
-
-    public CreateOrderService(OrderRepositoryPort orderRepository, PatientRepositoryPort patientRepository,
-                              StaffRepositoryPort staffRepository, MedicationRepositoryPort medicationRepository, // ✅ CORREGIDO
-                              ProcedureRepositoryPort procedureRepository, DiagnosticAidRepositoryPort diagnosticAidRepository,
-                              SpecialistRepositoryPort specialistRepository, OrderInvoiceTriggerService orderInvoiceTriggerService)  {
+    public CreateOrderService(OrderRepositoryPort orderRepository,
+                              PatientRepositoryPort patientRepository,
+                              StaffRepositoryPort staffRepository,
+                              MedicationRepositoryPort medicationRepository,
+                              ProcedureRepositoryPort procedureRepository,
+                              DiagnosticAidRepositoryPort diagnosticAidRepository,
+                              SpecialistRepositoryPort specialistRepository,
+                              ApplicationEventPublisher eventPublisher) {
         this.orderRepository = orderRepository;
         this.patientRepository = patientRepository;
         this.staffRepository = staffRepository;
@@ -44,7 +50,7 @@ public class CreateOrderService implements CreateOrderUseCase {
         this.procedureRepository = procedureRepository;
         this.diagnosticAidRepository = diagnosticAidRepository;
         this.specialistRepository = specialistRepository;
-        this.orderInvoiceTriggerService = orderInvoiceTriggerService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -74,8 +80,6 @@ public class CreateOrderService implements CreateOrderUseCase {
 
         validateOrderItemCompatibility(command.items());
 
-
-
         for (CreateOrderCommand.OrderItemData itemData : command.items()) {
             OrderItem newItem;
             if (itemData.type() == OrderItemType.MEDICATION) {
@@ -89,9 +93,19 @@ public class CreateOrderService implements CreateOrderUseCase {
             order.addItem(newItem);
         }
 
+
         Order savedOrder = orderRepository.save(order);
-        orderInvoiceTriggerService.onOrderCreated(savedOrder);
-        return orderRepository.save(order);
+
+
+        eventPublisher.publishEvent(
+                new OrderCreatedEvent(
+                        savedOrder.getId(),
+                        savedOrder.getOrderNumber(),
+                        patientId.getValue()
+                )
+        );
+
+        return savedOrder;
     }
 
     private void validateOrderItemCompatibility(List<CreateOrderCommand.OrderItemData> items) {
@@ -106,7 +120,6 @@ public class CreateOrderService implements CreateOrderUseCase {
             );
         }
 
-        // VALIDACIÓN: Unicidad de números de ítem
         long distinctItemNumbers = items.stream()
                 .map(CreateOrderCommand.OrderItemData::itemNumber)
                 .distinct()
@@ -116,7 +129,6 @@ public class CreateOrderService implements CreateOrderUseCase {
             throw new IllegalStateException("Los números de ítem deben ser únicos dentro de la orden.");
         }
 
-        // VALIDACIÓN: Números de ítem consecutivos comenzando desde 1
         boolean hasValidItemNumbers = items.stream()
                 .map(CreateOrderCommand.OrderItemData::itemNumber)
                 .sorted()
@@ -146,7 +158,14 @@ public class CreateOrderService implements CreateOrderUseCase {
                 throw new ResourceNotFoundException("Especialista con ID " + data.specialistId() + " no encontrado.");
             }
         }
-        return new ProcedureOrderItem(data.itemNumber(), data.itemId(), data.quantity(), data.frequency(), data.requiresSpecialist(), data.specialistId());
+        return new ProcedureOrderItem(
+                data.itemNumber(),
+                data.itemId(),
+                data.quantity(),
+                data.frequency(),
+                data.requiresSpecialist(),
+                data.specialistId()
+        );
     }
 
     private DiagnosticAidOrderItem createDiagnosticAidItem(CreateOrderCommand.OrderItemData data) {
@@ -158,6 +177,12 @@ public class CreateOrderService implements CreateOrderUseCase {
                 throw new ResourceNotFoundException("Especialista con ID " + data.specialistId() + " no encontrado.");
             }
         }
-        return new DiagnosticAidOrderItem(data.itemNumber(), data.itemId(), data.quantity(), data.requiresSpecialist(), data.specialistId());
+        return new DiagnosticAidOrderItem(
+                data.itemNumber(),
+                data.itemId(),
+                data.quantity(),
+                data.requiresSpecialist(),
+                data.specialistId()
+        );
     }
 }

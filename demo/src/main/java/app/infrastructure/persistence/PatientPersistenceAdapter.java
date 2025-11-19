@@ -54,7 +54,7 @@ public class PatientPersistenceAdapter implements PatientRepositoryPort {
         return patientJpaRepository.findByEmail(email);
     }
 
-    // Y si agregaste existsByEmail:
+
     @Override
     public boolean existsByEmail(Email email) {
         return patientJpaRepository.existsByEmail(email);

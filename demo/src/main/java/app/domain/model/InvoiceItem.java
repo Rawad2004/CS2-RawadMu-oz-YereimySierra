@@ -1,4 +1,3 @@
-// File: src/main/java/app/domain/model/InvoiceItem.java
 package app.domain.model;
 
 import app.domain.model.enums.InvoiceItemType;
@@ -20,21 +19,24 @@ public class InvoiceItem {
     @Column(nullable = false)
     private InvoiceItemType type;
 
+    @Column(nullable = false)
     private int quantity;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "unit_price"))
+            @AttributeOverride(name = "amount", column = @Column(name = "unit_price")),
+            @AttributeOverride(name = "currency", column = @Column(name = "unit_price_currency"))
     })
     private Money unitPrice;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "total_cost"))
+            @AttributeOverride(name = "amount", column = @Column(name = "total_cost")),
+            @AttributeOverride(name = "currency", column = @Column(name = "total_cost_currency"))
     })
     private Money totalCost;
 
-    // Metadata adicional según el tipo
+
     private String medicationDosage;
     private String procedureFrequency;
     private String diagnosticDetails;
@@ -47,25 +49,18 @@ public class InvoiceItem {
         this.unitPrice = unitPrice;
         this.totalCost = unitPrice.multiply(quantity);
 
-        // Set details según el tipo
         switch (type) {
-            case MEDICATION:
-                this.medicationDosage = details;
-                break;
-            case PROCEDURE:
-                this.procedureFrequency = details;
-                break;
-            case DIAGNOSTIC_AID:
-                this.diagnosticDetails = details;
-                break;
+            case MEDICATION -> this.medicationDosage = details;
+            case PROCEDURE -> this.procedureFrequency = details;
+            case DIAGNOSTIC_AID -> this.diagnosticDetails = details;
         }
     }
 
     protected InvoiceItem() {
-        // Constructor para JPA
+
     }
 
-    // Getters
+
     public Long getId() { return id; }
     public String getDescription() { return description; }
     public InvoiceItemType getType() { return type; }

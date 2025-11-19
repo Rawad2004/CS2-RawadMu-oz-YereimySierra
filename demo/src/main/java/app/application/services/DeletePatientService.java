@@ -1,7 +1,6 @@
-// File: src/main/java/app/application/services/DeletePatientService.java
 package app.application.services;
 
-import app.application.usecases.AdministrativeUseCases.DeletePatientUseCase;
+import app.application.usecases.AdministrativeUseCases;
 import app.domain.model.vo.NationalId;
 import app.domain.repository.PatientRepositoryPort;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class DeletePatientService implements DeletePatientUseCase {
+public class DeletePatientService implements AdministrativeUseCases.DeletePatientUseCase {
 
     private final PatientRepositoryPort patientRepository;
 
@@ -23,11 +22,11 @@ public class DeletePatientService implements DeletePatientUseCase {
             throw new IllegalArgumentException("ID de paciente inválido");
         }
 
-        // Verificar que el paciente existe
+
         patientRepository.findById(patientId)
                 .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado con ID: " + patientId));
 
-        // ✅ Validación de seguridad: Verificar que no tiene historial médico u órdenes activas
+
         if (hasPatientMedicalHistory(patientId)) {
             throw new IllegalStateException(
                     "No se puede eliminar el paciente porque tiene historial médico asociado. " +
@@ -50,8 +49,6 @@ public class DeletePatientService implements DeletePatientUseCase {
     }
 
     private boolean hasPatientMedicalHistory(Long patientId) {
-        // Por ahora permitimos la eliminación
-        // En producción, verificar si tiene historial clínico u órdenes activas
         return false;
     }
 }

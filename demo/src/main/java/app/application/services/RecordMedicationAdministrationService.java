@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/RecordMedicationAdministrationService.java
 package app.application.services;
 
 import app.application.port.in.RecordMedicationAdministrationCommand;
@@ -19,7 +18,7 @@ import java.util.List;
 public class RecordMedicationAdministrationService implements RecordMedicationAdministrationUseCase {
 
     private final PatientRepositoryPort patientRepository;
-    private final MedicationRepositoryPort medicationRepository; // ✅ CORREGIDO
+    private final MedicationRepositoryPort medicationRepository;
     private final OrderRepositoryPort orderRepository;
 
     public RecordMedicationAdministrationService(PatientRepositoryPort patientRepository,
@@ -32,26 +31,24 @@ public class RecordMedicationAdministrationService implements RecordMedicationAd
 
     @Override
     public Patient recordMedicationAdministration(String patientNationalId, RecordMedicationAdministrationCommand command) {
-        // 1. Validar que el paciente existe
+
         Patient patient = patientRepository.findByNationalId(new NationalId(patientNationalId))
                 .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado con cédula: " + patientNationalId));
 
-        // 2. Validar que el medicamento existe
+
         Medication medication = medicationRepository.findById(command.medicationId())
                 .orElseThrow(() -> new IllegalArgumentException("Medicamento no encontrado con ID: " + command.medicationId()));
 
-        // 3. Validar que la hora de administración no sea futura
+
         if (command.administrationTime().isAfter(LocalDateTime.now())) {
             throw new IllegalArgumentException("La hora de administración no puede ser futura");
         }
 
-        // 4. Validar que existe una orden activa con este medicamento para el paciente
         validateActiveMedicationOrder(patientNationalId, command.medicationId(), command.dose());
 
-        // 5. Crear Value Objects con validaciones
+
         Dose dose = new Dose(command.dose());
 
-        // 6. Registrar la administración (en una implementación real, crearíamos una entidad MedicationAdministration)
         System.out.println("✅ Administración registrada - Paciente: " + patientNationalId +
                 ", Medicamento: " + medication.getName() +
                 ", Dosis: " + dose.getValue() +
@@ -61,7 +58,6 @@ public class RecordMedicationAdministrationService implements RecordMedicationAd
     }
 
     private void validateActiveMedicationOrder(String patientNationalId, Long medicationId, String dose) {
-        // Buscar todas las órdenes del paciente
         List<Order> patientOrders = orderRepository.findByPatientId(new NationalId(patientNationalId));
 
         boolean hasActiveOrder = patientOrders.stream()

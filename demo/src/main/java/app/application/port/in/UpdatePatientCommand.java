@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/port/in/UpdatePatientCommand.java
 package app.application.port.in;
 
 import app.domain.model.enums.Gender;
@@ -6,10 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
 public record UpdatePatientCommand(
-        @NotBlank(message = "La cédula del paciente es obligatoria")
+        Long id, @NotBlank(message = "La cédula del paciente es obligatoria")
         String nationalId,
 
         @NotBlank(message = "El nombre completo es obligatorio")
@@ -46,9 +46,7 @@ public record UpdatePatientCommand(
 
             @NotBlank(message = "El teléfono de emergencia es obligatorio")
             String phoneNumber
-    ) {
-
-    }
+    ) { }
 
     public record InsurancePolicyData(
             @NotBlank(message = "El nombre de la compañía de seguros es obligatorio")

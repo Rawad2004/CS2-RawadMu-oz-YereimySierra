@@ -1,4 +1,3 @@
-// File: src/main/java/app/domain/model/Invoice.java
 package app.domain.model;
 
 import app.domain.model.enums.InvoiceStatus;
@@ -94,7 +93,6 @@ public class Invoice {
     @Column(nullable = false)
     private InvoiceStatus status;
 
-    // Constructor principal con reglas de negocio
     public Invoice(String patientNationalId, String patientName, int patientAge,
                    String doctorName, String insuranceCompany, String policyNumber,
                    Money policyDailyCoverage, LocalDate policyEndDate, boolean isPolicyActive,
@@ -117,33 +115,33 @@ public class Invoice {
         this.createdAt = LocalDateTime.now();
         this.status = InvoiceStatus.GENERATED;
 
-        // Calcular montos según reglas de negocio
+
         calculateAmounts();
     }
 
     protected Invoice() {
-        // Constructor protegido para JPA
+
     }
 
-    // REGLAS DE NEGOCIO PRINCIPALES
+
     private void calculateAmounts() {
-        // 1. Calcular subtotal (suma de todos los items)
+
         Money calculatedSubtotal = Money.zero();
         for (InvoiceItem item : items) {
             calculatedSubtotal = calculatedSubtotal.add(item.getTotalCost());
         }
         this.subtotal = calculatedSubtotal;
 
-        // 2. Aplicar reglas de copago según póliza
+
         if (!isPolicyActive || policyEndDate.isBefore(LocalDate.now())) {
-            // Póliza inactiva o vencida: paciente paga todo
+
             this.copayment = this.subtotal;
             this.insuranceCoverage = Money.zero();
         } else {
-            // Póliza activa: aplicar copago de $50,000
+
             Money standardCopayment = new Money(new BigDecimal("50000"));
 
-            // Si el subtotal es menor al copago estándar, usar el subtotal completo
+
             if (this.subtotal.isLessThan(standardCopayment)) {
                 this.copayment = this.subtotal;
                 this.insuranceCoverage = Money.zero();
@@ -153,11 +151,10 @@ public class Invoice {
             }
         }
 
-        // 3. Total es igual al subtotal (para consistencia)
+
         this.total = this.subtotal;
     }
 
-    // Método para aplicar exención por copagos > $1M (se llama desde el servicio)
     public void applyCopaymentExemption() {
         if (this.isPolicyActive && this.copayment != null) {
             this.insuranceCoverage = this.insuranceCoverage.add(this.copayment);
@@ -165,7 +162,7 @@ public class Invoice {
         }
     }
 
-    // Validaciones de negocio
+
     private void validateConstruction(String patientNationalId, String patientName,
                                       String doctorName, List<InvoiceItem> items, int fiscalYear) {
         if (patientNationalId == null || patientNationalId.trim().isEmpty()) {
@@ -187,10 +184,9 @@ public class Invoice {
 
     private String generateInvoiceNumber() {
         return "INV-" + System.currentTimeMillis() + "-" +
-                (int)(Math.random() * 1000); // Número único temporal
+                (int)(Math.random() * 1000);
     }
 
-    // Métodos de negocio
     public boolean isPolicyActive() {
         return isPolicyActive && !policyEndDate.isBefore(LocalDate.now());
     }
@@ -207,7 +203,6 @@ public class Invoice {
         return subtotal != null ? subtotal.getAmount() : BigDecimal.ZERO;
     }
 
-    // Getters
     public Long getId() { return id; }
     public String getInvoiceNumber() { return invoiceNumber; }
     public String getPatientNationalId() { return patientNationalId; }
@@ -235,10 +230,8 @@ public class Invoice {
         this.status = InvoiceStatus.CANCELLED;
     }
 
-    // Método para agregar items (útil para testing)
     public void addItem(InvoiceItem item) {
         this.items.add(item);
-        // Recalcular montos
         calculateAmounts();
     }
 }

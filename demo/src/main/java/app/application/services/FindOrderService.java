@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/FindOrderService.java
 package app.application.services;
 
 import app.application.usecases.NurseUseCases;
@@ -34,14 +33,14 @@ public class FindOrderService implements NurseUseCases.FindOrderUseCase {
         }
 
         NationalId nationalId = new NationalId(patientNationalId);
-        return orderRepository.findByPatientId(nationalId); // ← Ahora funciona
+        return orderRepository.findByPatientId(nationalId);
     }
 
     @Override
     public List<Order> findOrdersByPatientNationalIdAndMedication(String patientNationalId, Long medicationId) {
         List<Order> patientOrders = findOrdersByPatientNationalId(patientNationalId);
 
-        // Filtrar órdenes que contengan el medicamento específico
+
         return patientOrders.stream()
                 .filter(order -> order.getItems().stream()
                         .anyMatch(item -> item instanceof app.domain.model.order.MedicationOrderItem &&
@@ -52,15 +51,13 @@ public class FindOrderService implements NurseUseCases.FindOrderUseCase {
     public List<Order> findActiveOrdersByPatient(String patientNationalId) {
         List<Order> patientOrders = findOrdersByPatientNationalId(patientNationalId);
 
-        // Filtrar órdenes activas (implementar lógica según reglas de negocio)
+
         return patientOrders.stream()
                 .filter(this::isOrderActive)
                 .toList();
     }
 
     private boolean isOrderActive(Order order) {
-        // Implementar lógica real según las reglas de negocio
-        // Por ejemplo: órdenes de los últimos 7 días
         return order.getCreationDate().isAfter(java.time.LocalDate.now().minusDays(7));
     }
 }

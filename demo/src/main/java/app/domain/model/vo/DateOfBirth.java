@@ -12,16 +12,6 @@ public class DateOfBirth implements Serializable {
 
     public DateOfBirth(LocalDate value) {
 
-        System.out.println("-----------------------------------------");
-        System.out.println("DEBUG: Entrando al constructor de BirthDate");
-        System.out.println("DEBUG: Fecha recibida (value): " + value);
-        System.out.println("DEBUG: Fecha actual (LocalDate.now()): " + LocalDate.now());
-        System.out.println("DEBUG: Límite de 150 años (now - 150): " + LocalDate.now().minusYears(150));
-        System.out.println("DEBUG: ¿La fecha recibida es anterior al límite? " + value.isBefore(LocalDate.now().minusYears(150)));
-        System.out.println("-----------------------------------------");
-
-
-
         if (value == null) {
             throw new IllegalArgumentException("La fecha de nacimiento no puede ser nula.");
         }

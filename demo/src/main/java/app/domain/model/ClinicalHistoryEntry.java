@@ -1,4 +1,3 @@
-// File: src/main/java/app/domain/model/ClinicalHistoryEntry.java
 package app.domain.model;
 
 import org.springframework.data.annotation.Id;
@@ -23,24 +22,24 @@ public class ClinicalHistoryEntry {
 
     // Enums para estado y tipo de orden
     public enum OrderStatus {
-        NO_ORDER,           // No hay orden asociada
-        PENDING_DIAGNOSTIC, // Esperando resultados de ayuda diagnóstica
-        CREATED,            // Orden creada
-        IN_PROGRESS,        // Orden en progreso
-        COMPLETED,          // Orden completada
-        CANCELLED           // Orden cancelada
+        NO_ORDER,
+        PENDING_DIAGNOSTIC,
+        CREATED,
+        IN_PROGRESS,
+        COMPLETED,
+        CANCELLED
     }
 
     public enum OrderType {
-        NONE,               // No hay orden
-        DIAGNOSTIC_AID,     // Orden de ayuda diagnóstica
-        MEDICATION,         // Orden de medicamentos
-        PROCEDURE,          // Orden de procedimientos
-        MIXED,              // Orden mixta (medicamentos + procedimientos)
-        FOLLOW_UP           // Seguimiento sin orden específica
+        NONE,
+        DIAGNOSTIC_AID,
+        MEDICATION,
+        PROCEDURE,
+        MIXED,
+        FOLLOW_UP
     }
 
-    // Constructor protegido para MongoDB
+
     protected ClinicalHistoryEntry() {}
 
     public ClinicalHistoryEntry(String patientNationalId) {
@@ -48,7 +47,7 @@ public class ClinicalHistoryEntry {
         this.visitData = new HashMap<>();
     }
 
-    // Método para agregar una visita
+
     public void addVisit(LocalDate visitDate, String doctorNationalId,
                          String reasonForVisit, String symptomatology,
                          String diagnosis, String orderNumber, OrderType orderType) {
@@ -61,14 +60,14 @@ public class ClinicalHistoryEntry {
         this.visitData.put(visitDate, newVisit);
     }
 
-    // Método sobrecargado para visitas sin orden
+
     public void addVisit(LocalDate visitDate, String doctorNationalId,
                          String reasonForVisit, String symptomatology, String diagnosis) {
         this.addVisit(visitDate, doctorNationalId, reasonForVisit, symptomatology,
                 diagnosis, null, OrderType.NONE);
     }
 
-    // Método para actualizar diagnóstico de una visita existente
+
     public void updateDiagnosis(LocalDate visitDate, String newDiagnosis, String updateNotes) {
         if (this.visitData != null && this.visitData.containsKey(visitDate)) {
             VisitData visit = this.visitData.get(visitDate);
@@ -80,7 +79,7 @@ public class ClinicalHistoryEntry {
         }
     }
 
-    // Método para asociar una orden a una visita existente
+
     public void associateOrder(LocalDate visitDate, String orderNumber, OrderType orderType) {
         if (this.visitData != null && this.visitData.containsKey(visitDate)) {
             VisitData visit = this.visitData.get(visitDate);
@@ -90,7 +89,7 @@ public class ClinicalHistoryEntry {
         }
     }
 
-    // Método para marcar una visita como pendiente de diagnóstico
+
     public void markAsPendingDiagnostic(LocalDate visitDate) {
         if (this.visitData != null && this.visitData.containsKey(visitDate)) {
             VisitData visit = this.visitData.get(visitDate);
@@ -100,25 +99,59 @@ public class ClinicalHistoryEntry {
         }
     }
 
-    // Método para obtener una visita específica
+
+    public void registerVitalSigns(LocalDate visitDate,
+                                   String bloodPressure,
+                                   Double temperature,
+                                   Integer pulse,
+                                   Integer oxygenSaturation,
+                                   String nurseNotes) {
+        if (this.visitData == null || !this.visitData.containsKey(visitDate)) {
+            throw new IllegalArgumentException("No existe visita para la fecha: " + visitDate);
+        }
+        VisitData visit = this.visitData.get(visitDate);
+        visit.registerVitalSigns(bloodPressure, temperature, pulse, oxygenSaturation, nurseNotes);
+    }
+
+
+    public void addNursingRecord(LocalDate visitDate,
+                                 String orderNumber,
+                                 int itemNumber,
+                                 String description) {
+        if (this.visitData == null || !this.visitData.containsKey(visitDate)) {
+            throw new IllegalArgumentException("No existe visita para la fecha: " + visitDate);
+        }
+        VisitData visit = this.visitData.get(visitDate);
+        String record = "Orden " + orderNumber + " ítem " + itemNumber + ": " + description;
+        visit.appendNurseRecord(record);
+    }
+
     public VisitData getVisit(LocalDate visitDate) {
         return this.visitData != null ? this.visitData.get(visitDate) : null;
     }
 
-    // Método para verificar si existe una visita en una fecha
     public boolean hasVisitOnDate(LocalDate visitDate) {
         return this.visitData != null && this.visitData.containsKey(visitDate);
     }
 
-    // Getters
+    public void deleteVisit(LocalDate visitDate) {
+        if (this.visitData == null || !this.visitData.containsKey(visitDate)) {
+            throw new IllegalArgumentException("No existe visita para la fecha: " + visitDate);
+        }
+
+        this.visitData.remove(visitDate);
+    }
+
+
     public String getId() { return id; }
     public String getPatientNationalId() { return patientNationalId; }
     public Map<LocalDate, VisitData> getVisitData() {
         return visitData != null ? new HashMap<>(visitData) : new HashMap<>();
     }
 
-    // Clase interna para los datos de la visita
+
     public static class VisitData {
+
         @Field("doctor_national_id")
         private String doctorNationalId;
 
@@ -143,7 +176,23 @@ public class ClinicalHistoryEntry {
         @Field("update_notes")
         private String updateNotes;
 
-        // Constructor para MongoDB
+
+        @Field("blood_pressure")
+        private String bloodPressure;
+
+        @Field("temperature")
+        private Double temperature;
+
+        @Field("pulse")
+        private Integer pulse;
+
+        @Field("oxygen_saturation")
+        private Integer oxygenSaturation;
+
+        @Field("nurse_notes")
+        private String nurseNotes;
+
+
         protected VisitData() {}
 
         public VisitData(String doctorNationalId, String reasonForVisit,
@@ -157,7 +206,7 @@ public class ClinicalHistoryEntry {
             this.orderType = orderType;
             this.lastUpdateDate = LocalDate.now();
 
-            // Determinar el estado basado en si hay orden o no
+
             if (orderNumber != null && !orderNumber.trim().isEmpty()) {
                 this.orderStatus = OrderStatus.CREATED;
             } else {
@@ -165,7 +214,7 @@ public class ClinicalHistoryEntry {
             }
         }
 
-        // Método para asociar una orden posteriormente
+
         public void associateOrder(String orderNumber, OrderType orderType) {
             this.orderNumber = orderNumber;
             this.orderType = orderType;
@@ -173,25 +222,49 @@ public class ClinicalHistoryEntry {
             this.lastUpdateDate = LocalDate.now();
         }
 
-        // Método para marcar como pendiente de diagnóstico
+
         public void markAsPendingDiagnostic() {
             this.orderStatus = OrderStatus.PENDING_DIAGNOSTIC;
             this.lastUpdateDate = LocalDate.now();
         }
 
-        // Método para completar la orden
+
         public void markAsCompleted() {
             this.orderStatus = OrderStatus.COMPLETED;
             this.lastUpdateDate = LocalDate.now();
         }
 
-        // Método para cancelar la orden
+
         public void markAsCancelled() {
             this.orderStatus = OrderStatus.CANCELLED;
             this.lastUpdateDate = LocalDate.now();
         }
 
-        // Getters y Setters
+        public void registerVitalSigns(String bloodPressure,
+                                       Double temperature,
+                                       Integer pulse,
+                                       Integer oxygenSaturation,
+                                       String nurseNotes) {
+            this.bloodPressure = bloodPressure;
+            this.temperature = temperature;
+            this.pulse = pulse;
+            this.oxygenSaturation = oxygenSaturation;
+            if (nurseNotes != null && !nurseNotes.trim().isEmpty()) {
+                appendNurseRecord("Signos vitales: " + nurseNotes);
+            }
+            this.lastUpdateDate = LocalDate.now();
+        }
+
+        public void appendNurseRecord(String record) {
+            if (this.nurseNotes == null || this.nurseNotes.isBlank()) {
+                this.nurseNotes = record;
+            } else {
+                this.nurseNotes = this.nurseNotes + System.lineSeparator() + record;
+            }
+            this.lastUpdateDate = LocalDate.now();
+        }
+
+
         public String getDoctorNationalId() { return doctorNationalId; }
         public String getReasonForVisit() { return reasonForVisit; }
         public String getSymptomatology() { return symptomatology; }
@@ -204,5 +277,11 @@ public class ClinicalHistoryEntry {
         public void setLastUpdateDate(LocalDate lastUpdateDate) { this.lastUpdateDate = lastUpdateDate; }
         public String getUpdateNotes() { return updateNotes; }
         public void setUpdateNotes(String updateNotes) { this.updateNotes = updateNotes; }
+
+        public String getBloodPressure() { return bloodPressure; }
+        public Double getTemperature() { return temperature; }
+        public Integer getPulse() { return pulse; }
+        public Integer getOxygenSaturation() { return oxygenSaturation; }
+        public String getNurseNotes() { return nurseNotes; }
     }
 }

@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/port/in/CreateOrderCommand.java
 package app.application.port.in;
 
 import app.domain.model.enums.OrderItemType;
@@ -34,11 +33,11 @@ public record CreateOrderCommand(
             @Positive(message = "El ID del item debe ser positivo")
             Long itemId,
 
-            // Campos específicos para MEDICATION
+
             String dose,
             String treatmentDuration,
 
-            // Campos específicos para PROCEDURE y DIAGNOSTIC_AID
+
             @Positive(message = "La cantidad debe ser positiva")
             Integer quantity,
             String frequency,

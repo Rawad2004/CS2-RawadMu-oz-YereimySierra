@@ -1,4 +1,3 @@
-// File: src/main/java/app/application/services/OrderClinicalHistorySyncService.java
 package app.application.services;
 
 import app.domain.model.Order;
@@ -19,22 +18,18 @@ public class OrderClinicalHistorySyncService {
         this.clinicalHistoryRepository = clinicalHistoryRepository;
     }
 
-    /**
-     * Sincroniza una orden con la historia clínica del paciente
-     */
+
     public void syncOrderWithClinicalHistory(Order order) {
         try {
             String patientNationalId = order.getPatientId().getValue();
             String doctorNationalId = order.getDoctorId().getValue();
             LocalDate orderDate = order.getCreationDate();
 
-            // Determinar el tipo de orden basado en los items
             String orderType = determineOrderType(order);
             String diagnosis = "Orden de " + orderType + " pendiente de resultados";
 
-            // Verificar si ya existe una entrada para esta fecha
             if (!clinicalHistoryRepository.existsVisit(patientNationalId, orderDate)) {
-                // Crear nueva entrada en la historia clínica
+
                 clinicalHistoryRepository.addVisit(
                         patientNationalId,
                         orderDate,

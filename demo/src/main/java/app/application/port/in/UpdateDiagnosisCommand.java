@@ -1,4 +1,4 @@
-// File: src/main/java/app/application/port/in/UpdateDiagnosisCommand.java
+
 package app.application.port.in;
 
 import jakarta.validation.constraints.NotBlank;

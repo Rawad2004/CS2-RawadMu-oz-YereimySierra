@@ -1,4 +1,3 @@
-// File: src/main/java/app/infrastructure/persistence/mongodb/ClinicalHistoryMongoRepository.java
 package app.infrastructure.persistence.mongodb;
 
 import app.domain.model.ClinicalHistoryEntry;
@@ -13,7 +12,4 @@ import java.util.Optional;
 public interface ClinicalHistoryMongoRepository extends MongoRepository<ClinicalHistoryEntry, String> {
 
     Optional<ClinicalHistoryEntry> findByPatientNationalId(String patientNationalId);
-
-    @Query("{ 'patient_national_id': ?0, 'visit_data.?1': { $exists: true } }")
-    boolean existsByPatientNationalIdAndVisitDate(String patientNationalId, LocalDate visitDate);
 }

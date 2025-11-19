@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
+import app.domain.model.vo.Money;
+
 
 
 @Embeddable
@@ -29,4 +31,9 @@ public class InsurancePolicy implements Serializable {
     public LocalDate getExpiryDate() {return expiryDate;}
 
 
+    public Money getDailyCoverage() {
+        // Por ahora no manejamos cobertura diaria real,
+        // devolvemos 0 para permitir que el módulo de facturación funcione.
+        return Money.zero();
+    }
 }
